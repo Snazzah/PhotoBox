@@ -1,0 +1,18 @@
+{
+  "discordToken": "",
+  "prefix": "📷",
+  "owner": "158049329150427136",
+  "redis": {
+    "prefix": "photobox:"
+  },
+  "discord": {
+    "autoReconnect": true,
+    "disableEveryone": true,
+    "maxCachedMessages": 250,
+    "bot": true,
+    "disabledEvents": ["TYPING_START", "TYPING_STOP"]
+  },
+  "debug": false,
+  "botlist": {},
+  "commands": "./Commands"
+}
