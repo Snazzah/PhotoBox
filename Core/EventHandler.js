@@ -18,6 +18,10 @@ module.exports = class EventHandler {
       let cname = args.splice(0, 1)[0]
       let command = this.client.cmds.get(cname)
       if(!command) return
+      if(Message.content.match(new RegExp(`^<@!?${this.client.user.id}>`))) {
+        message.mentions.users = message.mentions.users.filter(u => u.id)
+        message.mentions.members = message.mentions.members.filter(u => u.id)
+      }
       if(await this.client.cmds.processCooldown(Message, cname)) {
         if(command.permissions.includes('attach') && !this.client.attach(Message)) return Message.reply("I need the permission `Attach Files` to use this command!")
         if(command.permissions.includes('embed') && !this.client.embed(Message)) return Message.reply("I need the permission `Embed Links` to use this command!")
