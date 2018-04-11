@@ -889,6 +889,24 @@ let mods = {
     let bufferRes = await Utils.jimpBuffer(bg)
     msg.buffer = bufferRes.toString("base64")
     return msg
+  },
+  nickelback: async function(msg){
+    let containedavatar = (await Jimp.read(msg.avatar)).contain(400, 280)
+    let avatar = (new Jimp(446, 356)).composite(containedavatar, 0, 0)
+
+    let imavatar = im(await Utils.jimpBuffer(avatar))
+    imavatar.command('convert');
+    imavatar.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
+    imavatar.out("0,0,7,97 400,0,375,5 0,280,66,350 400,280,429,256");
+
+    let jBgImg = await Utils.imToJimp(imavatar)
+    let foreground = await Jimp.read(path.join(__dirname, 'assets', `nickelback.png`))
+    let img = new Jimp(1024, 576, 0xddddddff)
+    img.composite(jBgImg, 481, 188).composite(foreground, 0, 0)
+
+    let bufferRes = await Utils.jimpBuffer(img)
+    msg.buffer = bufferRes.toString("base64")
+    return msg
   }
 }
 
@@ -899,9 +917,7 @@ let processMessage = async function(msg){
   try{
     mods[msg.code](msg).then(result => {
       result.status = 'success'
-      if(!result.no_return){
-        process.send(result);
-      }
+      if(!result.no_return) process.send(result)
     }).catch((result) => {
       let err = {};
       if(result.stack){
@@ -943,7 +959,6 @@ process.once('SIGINT', (err) => {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  log("Unhandled Rejection:");
-  log(reason);
+  log("Unhandled Rejection:", reason, p);
   //console.log("Unhandled Rejection at ", p, 'reason ', reason);
 });
