@@ -7,6 +7,7 @@ Here are some font you need to download for things to work and stuff:
 - [tahoma.ttf](http://www.fontpalace.com/font-download/Tahoma/)
 - comic.ttf *(It can be found inside every Windows PC from their fonts folder, must be Regular)*
 - impact.ttf *(same as comic.ttf)*
+- [edmunds.ttf](https://www.dafont.com/edmunds.font) *use distressed version*
 
 ## Who not give it to us straight from Github?
 Because i'm not looking for a lawsuit ok?

@@ -871,6 +871,24 @@ let mods = {
     let bufferRes = await Utils.jimpBuffer(bg)
     msg.buffer = bufferRes.toString("base64")
     return msg
+  },
+  wanted: async function(msg){
+    let bodyt = await Utils.createCaption({
+      text: msg.username.toUpperCase(),
+      font: 'edmunds.ttf',
+      size: '517x54',
+      gravity: 'North'
+    })
+    let body = await Jimp.read(bodyt)
+    let bg = await Jimp.read(path.join(__dirname, 'assets', `wanted.png`))
+    let overlay = await Jimp.read(path.join(__dirname, 'assets', `wanted_overlay.png`))
+    let avatar = (await Jimp.read(msg.avatar)).contain(545, 536).sepia().color([
+      { apply: 'mix', params: [ '#d09245', 60 ] }
+    ])
+    bg.composite(avatar, 166, 422).composite(overlay, 0, 0).composite(body, 184, 962)
+    let bufferRes = await Utils.jimpBuffer(bg)
+    msg.buffer = bufferRes.toString("base64")
+    return msg
   }
 }
 
