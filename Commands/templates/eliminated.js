@@ -8,16 +8,7 @@ module.exports = class Eliminated extends Command {
 
   async exec(message, args) {
     let text = Util.stripPrefixClean(message).split(' ').slice(1).join(' ')
-    if(message.mentions.users.size >= 1){
-      text = message.mentions.users.array()[0].username
-      if(message.content.match(new RegExp(`^<@!?${this.client.user.id}>`))){
-        if(message.mentions.users.size >= 2){
-          text = message.mentions.users.array()[1].username
-        }else{
-          text = Util.stripPrefixClean(message).split(' ').slice(1).join(' ')
-        }
-      }
-    }
+    if(message.mentions.users.size >= 1) text = message.mentions.users.array()[0].username
     if(!text) return message.channel.send("Provide text or a mention for this to work!")
     message.channel.startTyping()
     try {
