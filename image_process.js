@@ -70,7 +70,7 @@ class ImageMaster {
 
   process(msg) {
     try {
-      Object.keys(msg).map(k=>{
+      Object.keys(msg).map(k => {
         if(msg[k] && msg[k].type === "Buffer") msg[k] = new Buffer(msg[k].data);
       })
 
