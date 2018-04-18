@@ -1,6 +1,6 @@
 {
   "name": "PhotoBox",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A Discord Bot manipulating images",
   "main": "main.js",
   "scripts": {
@@ -13,7 +13,6 @@
     "chalk": "^1.1.3",
     "discord.js": "hydrabolt/discord.js#master",
     "erlpack": "discordapp/erlpack#master",
-    "canvas": "Automattic/node-canvas#master",
     "dnode": "^1.2.2",
     "entities": "^1.1.1",
     "gifencoder": "^1.0.6",
@@ -23,13 +22,12 @@
     "snekfetch": "^3.6.4",
     "buffer-image-size": "^0.6.4",
     "jimp": "^0.2.27",
-    "python-shell": "^0.4.0",
     "color-thief-jimp": "^2.0.2",
     "webshot": "^0.18.0",
     "twemoji": "^2.3.0",
     "highlight.js": "^9.12.0",
-    "marked": "^0.3.6",
     "redis": "^2.8.0",
+    "simple-markdown": "^0.3.3",
     "photobox": "./Classes",
     "photobox-core": "./Core"
   }

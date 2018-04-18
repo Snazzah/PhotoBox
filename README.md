@@ -26,6 +26,7 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 | debug | bool | Whether or not to use verbose logs |
 | botlist | object | Bot list tokens supported by [dbots.js](https://github.com/Snazzah/dbots.js) |
 | commands | string | The path to the folder where all the commands will be. |
+| image_codes | string | The path to the folder where all the image codes will be. |
 
 ### Sources
 - [Blargbot](https://github.com/Ratismal/blargbot) by Ratismal/stupid cat

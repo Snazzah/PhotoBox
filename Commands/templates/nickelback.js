@@ -1,7 +1,5 @@
 const { Command } = require('photobox')
 const { Util } = require('photobox-core')
-const sf = require('snekfetch')
-const is = require("buffer-image-size")
 
 module.exports = class Nickelback extends Command {
   get name() { return 'nickelback' }
