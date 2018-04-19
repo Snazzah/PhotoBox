@@ -56,9 +56,9 @@ module.exports = class PhotoBox extends Discord.Client {
 
   initPoster(){
     this.poster = new dbots.Poster({
-        client: this,
-        apiKeys: this.config.botlist,
-        clientLibrary: 'discord.js'
+      client: this,
+      apiKeys: this.config.botlist,
+      clientLibrary: 'discord.js'
     });
 
     this.poster.post()
