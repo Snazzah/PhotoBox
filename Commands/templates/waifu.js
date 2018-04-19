@@ -8,6 +8,10 @@ module.exports = class Waifu extends PhotoCommand {
   get helpMeta() { return {
     category: 'Image Manipulation',
     description: 'Use this if you think a waifu is trash.',
-    usage: '[url]'
+    usage: '[url]',
+    credit: {
+      name: "Korra By weeb-services",
+      url: "https://github.com/weeb-services/korra"
+    }
   } }
 }
