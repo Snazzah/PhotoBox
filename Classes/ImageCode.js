@@ -24,7 +24,6 @@ module.exports = class ImageCode {
 // SENDING
 
   sendJimp(msg, img) {
-    console.log('sending a jimp image')
     img.getBuffer(Jimp.MIME_PNG, (err, buf) => {
       if (err) throw err
       return this.sendBuffer(msg, buf)
