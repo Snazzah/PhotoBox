@@ -16,7 +16,7 @@ module.exports = class PhotoCommand extends Command {
     if(url){
       message.channel.startTyping()
       try {
-        let buffer = await this.sendToProcess(message, { code: this.code, avatar: url })
+        let buffer = await this.sendToProcess(message, { code: this.code, avatar: url, url })
         message.channel.send({ files: [{ attachment: buffer, name: `${this.code}.${this.extension}` }] })
       } catch (e) {
         Util.sendError(message, e)
