@@ -1,7 +1,6 @@
 const { ImageCode } = require('photobox')
 const Jimp = require('jimp')
 const path = require('path')
-const colorThief = require('color-thief-jimp')
 
 module.exports = class clippy extends ImageCode {
   async process(msg) {

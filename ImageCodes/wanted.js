@@ -1,8 +1,6 @@
 const { ImageCode } = require('photobox')
 const Jimp = require('jimp')
 const path = require('path')
-const colorThief = require('color-thief-jimp')
-const im = require('gm').subClass({ imageMagick: true })
 
 module.exports = class wanted extends ImageCode {
   async process(msg) {
