@@ -1,9 +1,10 @@
 const Jimp = require('jimp')
 const path = require('path')
-const gm = require('gm')
+const sf = require('snekfetch')
 const im = require('gm').subClass({ imageMagick: true })
 const GIFEncoder = require('gifencoder')
 const webshot = require('webshot')
+const Faced = new (require('faced'))()
 
 module.exports = class ImageCode {
   constructor(im) {
@@ -37,6 +38,12 @@ module.exports = class ImageCode {
     })
   }
 
+  async send(msg, buf) {
+    msg.buffer = (await this.toBuffer(buf)).toString("base64")
+    msg.status = 'success'
+    return process.send(msg)
+  }
+
   sendBuffer(msg, buf) {
     msg.status = 'success'
     msg.buffer = buf.toString("base64")
@@ -65,6 +72,17 @@ module.exports = class ImageCode {
         f(buffer);
       })
     })
+  }
+
+  async toBuffer(img) {
+    if(!img || !img.constructor || !img.constructor.name) throw new Error('Invalid class given')
+    switch(img.constructor.name){
+      case 'gm': return await this.imBuffer(img)
+      case 'Jimp': return await this.jimpBuffer(img)
+      case 'Buffer': return img
+      case 'String': return (await sf.get(img)).body
+      default: throw new Error('Unsupported class')
+    }
   }
 
 // CONVERSION
@@ -140,6 +158,14 @@ module.exports = class ImageCode {
       let bufferArray = []
       stream.on('data', buffer => bufferArray.push(buffer))
       stream.on('end', () => resolve(Buffer.concat(bufferArray)))
+    });
+  }
+
+  detectFaces(img) {
+    return new Promise(async (resolve, reject) => {
+      this.toBuffer(img).then(buf => {
+        Faced.detect(buf, (...a) => resolve(a))
+      }).catch(reject)
     });
   }
 }

@@ -62,7 +62,7 @@ module.exports = class ImageProcess {
       })
       return;
     };
-    if(this.debug) console.log("Main cought msg", msg);
+    //if(this.debug) console.log("Main cought msg", msg);
     if (awaitedRequests.hasOwnProperty(msg.id)) {
       if(msg.status == 'success'){
         awaitedRequests[msg.id].resolve(msg);
