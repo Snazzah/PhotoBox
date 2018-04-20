@@ -8,7 +8,6 @@ module.exports = class facedebug extends ImageCode {
     let picture = await Jimp.read(msg.avatar)
 
     let [faces, image] = await this.detectFaces(picture)
-    console.log(faces, image)
     if(!faces || !faces.length) {
       msg.noface = true
       return this.sendJimp(msg, await Jimp.read(path.join(__dirname, '..', 'assets', 'static', 'noface.png')))

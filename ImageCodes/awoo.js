@@ -14,21 +14,15 @@ module.exports = class awoo extends ImageCode {
       return this.sendJimp(msg, await Jimp.read(path.join(__dirname, '..', 'assets', 'static', 'noface.png')))
     }
 
-    console.log('faces', faces)
     await Promise.all(_.map(faces, async face => {
-      console.log('face', face)
       if(this.face) await this.face(picture, face)
       await Promise.all(_.map(face.getFeatures(), async (list, name) => {
-        console.log('face.getFeatures()', list, name)
         if(!this[name]) return
         await Promise.all(_.map(list, async feature => {
-          console.log('face.getFeatures() child', feature)
           picture = await this[name](picture, feature)
         }))
       }))
     }))
-
-    console.log('timing')
 
     this.sendJimp(msg, picture)
   }
@@ -43,7 +37,6 @@ module.exports = class awoo extends ImageCode {
   }
 
   async eyeRight(img, feature){
-    console.log(img, feature, "AAAAAAAAAAAAAAA")
     let right_eye = await Jimp.read(path.join(__dirname, '..', 'assets', 'awoo', 'right_eye.png'))
     right_eye.resize(feature.getWidth(), Jimp.AUTO)
     let x = feature.getX()
