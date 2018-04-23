@@ -5,6 +5,7 @@ const im = require('gm').subClass({ imageMagick: true })
 module.exports = class magik extends ImageCode {
   async process(msg) {
     let avatar = im(await this.toBuffer(msg.avatar))
+    avatar.setFormat('png')
     avatar.out('-liquid-rescale').out('180%')
     avatar.out('-liquid-rescale').out('60%')
     this.sendIM(msg, avatar)
