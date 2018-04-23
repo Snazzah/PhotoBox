@@ -31,11 +31,8 @@ module.exports = class ImageCode {
     })
   }
 
-  sendIM(msg, img) {
-    img.setFormat('png').toBuffer(function (err, buf) {
-      if (err) throw err
-      return this.sendBuffer(msg, buf)
-    })
+  async sendIM(msg, img) {
+    return this.sendBuffer(msg, await this.imBuffer(img))
   }
 
   async send(msg, buf) {

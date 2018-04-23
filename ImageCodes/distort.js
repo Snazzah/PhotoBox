@@ -9,7 +9,7 @@ module.exports = class distort extends ImageCode {
       { apply: 'spin', params: [this.rInt(10, 350)] }
     ]
     img1.color(filters)
-    let img2 = this.jimpToIM(img1)
+    let img2 = await this.jimpToIM(img1)
     let horizRoll = this.rInt(0, img1.bitmap.width),
         vertiRoll = this.rInt(0, img1.bitmap.height)
     img2.out('-implode').out(`-${this.rInt(3, 10)}`)

@@ -14,7 +14,7 @@ module.exports = class ImageProcess {
     this.process.on('message', this.onMessage.bind(this))
     this.process.on('disconnect', this.onDisconnect.bind(this))
     this.process.on('error', err => this.client.log('[IMG]', 'ERROR GIVEN:', err))
-    this.process.send({ code: 'start', shardid: this.shard, debug: this.debug })
+    this.process.send({ code: 'start', shard: this.shard, debug: this.debug, sharded: process.env.SHARDING_MANAGER })
   }
 
   send(msg){
