@@ -5,7 +5,7 @@ const im = require('gm').subClass({ imageMagick: true })
 
 module.exports = class waifu extends ImageCode {
   async process(msg) {
-    let containedavatar = (await Jimp.read(msg.avatar)).contain(155, 173)
+    let containedavatar = (await Jimp.read(msg.avatar)).cover(155, 173)
     let avatar = (new Jimp(155, 173)).composite(containedavatar, 0, 0)
 
     let imavatar = im(await this.jimpBuffer(avatar))
