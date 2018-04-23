@@ -17,8 +17,7 @@ module.exports = class respects extends ImageCode {
     let foreground = await Jimp.read(path.join(__dirname, '..', 'assets', `respects.png`))
     let img = new Jimp(950, 540, 0xffffffff);
     img.composite(jBgImg, 366, 91).composite(foreground, 0, 0)
-    wind.composite(avatar, 32, 56).composite(toptxt, 12, 10).composite(body, 108, 130)
 
-    this.sendJimp(msg, wind)
+    this.sendJimp(msg, img)
   }
 }

@@ -3,7 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class Waifu extends PhotoCommand {
   get name() { return 'waifu' }
-  get aliases() { return ['trashwaifu','trash'] }
+  get aliases() { return ['trashwaifu','trash','waifuinsult'] }
 
   get helpMeta() { return {
     category: 'Image Manipulation',
