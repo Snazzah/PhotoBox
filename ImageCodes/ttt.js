@@ -22,8 +22,9 @@ module.exports = class ttt extends ImageCode {
     let avatar = await Jimp.read(msg.avatar)
     let toptxt = await this.imToJimp(title)
     let body = await this.imToJimp(img)
-    let wind = Jimp.read(path.join(__dirname, '..', 'assets', `ttt.png`))
+    let wind = await Jimp.read(path.join(__dirname, '..', 'assets', `ttt.png`))
     avatar.resize(32, 32)
+    wind.composite(avatar, 32, 56).composite(toptxt, 12, 10).composite(body, 108, 130)
 
     this.sendJimp(msg, wind)
   }
