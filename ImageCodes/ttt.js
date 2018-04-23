@@ -25,6 +25,6 @@ module.exports = class ttt extends ImageCode {
     let wind = Jimp.read(path.join(__dirname, '..', 'assets', `ttt.png`))
     avatar.resize(32, 32)
 
-    this.sendJimp(msg, img)
+    this.sendJimp(msg, wind)
   }
 }
