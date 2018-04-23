@@ -1,32 +1,8 @@
-const { ImageCode } = require('photobox')
+const { FaceDetectIC } = require('photobox')
 const Jimp = require('jimp')
-const _ = require('underscore')
 const path = require('path')
 
-module.exports = class awoo extends ImageCode {
-  async process(msg) {
-    let picture = await Jimp.read(msg.avatar)
-
-    let [faces] = await this.detectFaces(picture)
-
-    if(!faces || !faces.length) {
-      msg.noface = true
-      return this.sendJimp(msg, await Jimp.read(path.join(__dirname, '..', 'assets', 'static', 'noface.png')))
-    }
-
-    await Promise.all(_.map(faces, async face => {
-      if(this.face) await this.face(picture, face)
-      await Promise.all(_.map(face.getFeatures(), async (list, name) => {
-        if(!this[name]) return
-        await Promise.all(_.map(list, async feature => {
-          picture = await this[name](picture, feature)
-        }))
-      }))
-    }))
-
-    this.sendJimp(msg, picture)
-  }
-
+module.exports = class awoo extends FaceDetectIC {
   async eyeLeft(img, feature){
     let left_eye = await Jimp.read(path.join(__dirname, '..', 'assets', 'awoo', 'left_eye.png'))
     left_eye.resize(feature.getWidth(), Jimp.AUTO)
