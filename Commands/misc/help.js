@@ -46,14 +46,14 @@ module.exports = class Help extends Command {
       let helpobj = {}
       this.client.cmds.commands.forEach((v, k) => { 
         if(!v.listed && !this.client.owner(message)) return
-        let string = `\`${prefix}${k}\` ${v.helpMeta.credit ? ':anger:' : ''}`
+        let string = `${prefix}${k}`
         if(helpobj[v.helpMeta.category]) helpobj[v.helpMeta.category].push(string);
           else helpobj[v.helpMeta.category] = [string];
       })
       helpobj.keyValueForEach((k, v) => { 
         embed.fields.push({
           name: `**${k}**`,
-          value: v.map(v=>`• ${v}`).join('\n'),
+          value: "```" + v.join(', ') + "```",
           inline: true
         })
       })
