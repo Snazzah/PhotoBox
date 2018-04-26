@@ -14,6 +14,6 @@ module.exports = class Restart extends Command {
 
   get helpMeta() { return {
     category: 'Admin',
-    description: 'Restarts the bot',
+    description: 'Restarts the current shard',
   } }
 }
