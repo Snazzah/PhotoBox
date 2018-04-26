@@ -3,6 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class IPRestart extends Command {
   get name() { return 'iprestart' }
+  get aliases() { return ['ipr'] }
 
   async exec(message, args) {
     await message.channel.send(`Killing image process.`)
