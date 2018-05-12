@@ -4,7 +4,7 @@ module.exports = class Distort extends PhotoCommand {
   get name() { return 'distort' }
 
   get helpMeta() { return {
-    category: 'Image Manipulation',
+    category: 'Filters',
     description: 'You. Are. Art.',
     usage: '[url]',
     credit: {

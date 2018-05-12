@@ -4,7 +4,7 @@ const Jimp = require('jimp')
 module.exports = class blurple extends ImageCode {
   async process(msg) {
     let img = await Jimp.read(msg.avatar)
-    img.scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
+    img.greyscale().scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
       var red = img.bitmap.data[idx];
       var green = img.bitmap.data[idx+1];
       var blue = img.bitmap.data[idx+2];

@@ -27,7 +27,7 @@ module.exports = class Sepia extends Command {
   get permissions() { return ['attach'] }
 
   get helpMeta() { return {
-    category: 'Effects',
+    category: 'Filters',
     description: 'Applies sepia wash to a image.',
     usage: '[url]'
   } }

@@ -28,7 +28,7 @@ module.exports = class Greyscale extends Command {
   get permissions() { return ['attach'] }
 
   get helpMeta() { return {
-    category: 'Effects',
+    category: 'Filters',
     description: "Removes an image's color.",
     usage: '[url]'
   } }

@@ -5,7 +5,7 @@ module.exports = class Blurple extends PhotoCommand {
   get aliases() { return ['blurpify'] }
 
   get helpMeta() { return {
-    category: 'Image Manipulation',
+    category: 'Filters',
     description: 'Celebrating the 3rd anniversary of Discord!',
     usage: '[url]'
   } }

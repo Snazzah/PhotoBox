@@ -28,7 +28,7 @@ module.exports = class Dither extends Command {
   get permissions() { return ['attach'] }
 
   get helpMeta() { return {
-    category: 'Effects',
+    category: 'Filters',
     description: 'Dithers an image.',
     usage: '[url]'
   } }

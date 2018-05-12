@@ -5,7 +5,7 @@ module.exports = class Magik extends PhotoCommand {
   get aliases() { return ['liquidrescale'] }
 
   get helpMeta() { return {
-    category: 'Image Manipulation',
+    category: 'Filters',
     description: 'Better than art.',
     usage: '[url]'
   } }
