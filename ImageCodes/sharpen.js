@@ -1,7 +1,7 @@
 const { ImageCode } = require('photobox')
 const Jimp = require('jimp')
 
-module.exports = class deepfry extends ImageCode {
+module.exports = class sharpen extends ImageCode {
   async process(msg) {
     let img = await Jimp.read(msg.avatar)
     img.convolute([
