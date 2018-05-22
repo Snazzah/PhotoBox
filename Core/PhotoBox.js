@@ -44,8 +44,7 @@ module.exports = class PhotoBox extends Discord.Client {
     this.db = new Database(this)
     this.db.connect(this.config.redis)
     await this.login()
-    this.IP = new ImageProcess(this)
-    this.IP.init()
+    this.IP = new ImageProcess(this.config.debug)
     this.user.setActivity(`my memory skyrocket | ${this.config.prefix}help`, { type: 3 });
     this.stats = new StatTracker(this)
     this.cmds = new CommandLoader(this, path.join(this.dir, this.config.commands), this.config.debug)

@@ -36,13 +36,12 @@ module.exports = class ImageCode {
   }
 
   async send(msg, buf) {
-    msg.buffer = (await this.toBuffer(buf)).toString("base64")
-    msg.status = 'success'
-    return process.send(msg)
+    return this.sendBuffer(msg, await this.toBuffer(buf))
   }
 
   sendBuffer(msg, buf) {
     msg.status = 'success'
+    msg.uptime = process.uptime()
     msg.buffer = buf.toString("base64")
     return process.send(msg)
   }
