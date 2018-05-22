@@ -34,7 +34,7 @@ module.exports = class Info extends Command {
         },
         {
           name: "**:gear: Memory Usage**",
-          value: `Bot: [${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB]()\nImage Process: [**Loading...**]()`,
+          value: `[${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB]()`,
           inline: true
         },
         {
@@ -48,15 +48,7 @@ module.exports = class Info extends Command {
       }
     }
 
-    message.channel.send("", { embed }).then(m=>{
-      this.client.IP.sendMessage(message, {code:"getMemUsed"}).then(mem => {
-        embed.fields[4].value = `Bot: [${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB]()\nImage Process: [${parseInt(mem.toString()).toFixed(2)} MB]()`;
-        m.edit("", { embed })
-      }).catch(()=>{
-        embed.fields[4].value = `Bot: [${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB]()\nImage Process: **Could not retrieve**`;
-        m.edit("", { embed })
-      })
-    })
+    message.channel.send("", { embed })
   }
 
   get permissions() { return ['embed'] }
