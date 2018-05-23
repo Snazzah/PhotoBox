@@ -69,6 +69,11 @@ module.exports = class PhotoBox extends Discord.Client {
     return super.login(this.config.discordToken)
   }
 
+  apiKey(name) {
+    if(!this.config.api || !this.config.api[name]) return
+    return this.config.api[name]
+  }
+
 // LOGGING
 
   get logPrefix() {

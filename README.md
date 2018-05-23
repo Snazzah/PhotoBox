@@ -25,6 +25,8 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 | discord | object | The [options](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for the Discord Client. |
 | debug | bool | Whether or not to use verbose logs |
 | botlist | object | Bot list tokens supported by [dbots.js](https://github.com/Snazzah/dbots.js) |
+| api | object | api keys for certain commands |
+| api.weebsh | string | Wolke token for Weeb.sh |
 | commands | string | The path to the folder where all the commands will be. |
 | image_codes | string | The path to the folder where all the image codes will be. |
 

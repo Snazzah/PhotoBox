@@ -14,6 +14,7 @@
   },
   "debug": false,
   "botlist": {},
+  "api": {},
   "commands": "./Commands",
   "image_codes": "./ImageCodes"
 }
