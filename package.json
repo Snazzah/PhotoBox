@@ -1,6 +1,6 @@
 {
   "name": "PhotoBox",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A Discord Bot manipulating images",
   "main": "main.js",
   "scripts": {
