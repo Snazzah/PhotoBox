@@ -4,6 +4,7 @@ module.exports = class Command {
   }
 
   exec(Message, Args) { }
+  preload() { }
 
   sendToProcess(Message, data) {
     return this.client.IP.sendMessage(Message, data)

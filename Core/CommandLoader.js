@@ -61,6 +61,15 @@ module.exports = class CommandLoader {
     return !!this.get(name)
   }
 
+  preload(name){
+    if(!this.has(name)) return
+    this.get(name).preload()
+  }
+
+  preloadAll(){
+    this.commands.forEach(c => c.preload())
+  }
+
   async processCooldown(message, name) {
     if(this.client.owner(message)) return true
     let command = this.get(name)

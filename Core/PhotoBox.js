@@ -49,6 +49,7 @@ module.exports = class PhotoBox extends Discord.Client {
     this.stats = new StatTracker(this)
     this.cmds = new CommandLoader(this, path.join(this.dir, this.config.commands), this.config.debug)
     this.cmds.reload()
+    this.cmds.preloadAll()
     this.eventHandler = new EventHandler(this)
     this.initPoster()
   }
