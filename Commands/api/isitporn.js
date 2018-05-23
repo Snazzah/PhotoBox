@@ -3,7 +3,7 @@ const { Util } = require('photobox-core')
 const sf = require('snekfetch')
 const is = require('buffer-image-size')
 
-module.exports = class testingc extends Command {
+module.exports = class IsItPorn extends Command {
   get name() { return 'isitporn' }
   get aliases() { return ['iip', 'porn'] }
   get cooldown() { return 5 }
