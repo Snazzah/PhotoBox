@@ -2,7 +2,7 @@ const Jimp = require('jimp')
 const path = require('path')
 const sf = require('snekfetch')
 const im = require('gm').subClass({ imageMagick: true })
-const GIFEncoder = require('gifencoder')
+const GIFEncoder = require('gif-encoder')
 const webshot = require('webshot')
 const Faced = new (require('faced'))()
 
@@ -126,18 +126,18 @@ module.exports = class ImageCode {
     return await this.imBuffer(image)
   }
 
-  createGif(width, height, frames, repeat, delay) {
+  createGif(width, height, frames, repeat, delay, trans = false) {
     return new Promise((resolve, reject) => {
-      let buffers = [];
+      let buffers = []
       let encoder = new GIFEncoder(width, height)
-      let stream = encoder.createReadStream()
-      stream.on('data', buffer => buffers.push(buffer))
-      stream.on('end', () => resolve(Buffer.concat(buffers)))
-      encoder.start()
+      encoder.on('data', buffer => buffers.push(buffer))
+      encoder.on('end', () => resolve(Buffer.concat(buffers)))
+      encoder.writeHeader()
       encoder.setRepeat(repeat)
       encoder.setDelay(delay)
+      if(trans) encoder.setTransparent(trans); else encoder.setTransparent(0);
       frames.map(frame => encoder.addFrame(frame))
-      encoder.finish();
+      encoder.finish()
     });
   }
 
