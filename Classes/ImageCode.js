@@ -46,8 +46,8 @@ module.exports = class ImageCode {
     return process.send(msg)
   }
 
-  async sendGIF(msg, width, height, frames, repeat, delay){
-    this.sendBuffer(msg, await this.createGif(width, height, frames, repeat, delay))
+  async sendGIF(msg, width, height, frames, repeat, delay, trans){
+    this.sendBuffer(msg, await this.createGif(width, height, frames, repeat, delay, trans))
   }
 
 // BUFFERS
