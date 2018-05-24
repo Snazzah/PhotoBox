@@ -25,6 +25,8 @@
     "color-thief-jimp": "^2.0.2",
     "webshot": "^0.18.0",
     "twemoji": "^2.3.0",
+    "tinycolor2": "^1.4.1",
+    "cheerio": "^1.0.0-rc.2",
     "highlight.js": "^9.12.0",
     "redis": "^2.8.0",
     "simple-markdown": "^0.3.3",
