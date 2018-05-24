@@ -7,6 +7,7 @@ module.exports = class Reload extends Command {
   exec(message, args) {
     message.channel.send("Reloading commands...")
     this.client.cmds.reload()
+    this.cmds.preloadAll()
   }
 
   get permissions() { return ['owner'] }
