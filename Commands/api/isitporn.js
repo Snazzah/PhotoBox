@@ -12,10 +12,9 @@ module.exports = class IsItPorn extends Command {
     let url = Util.parseURL(message, args[0]);
     if(url.toString().startsWith("Error: ")) return message.reply(url.toString())
     if(url){
-      url = `https://cors-anywhere.herokuapp.com/${url}`
       message.channel.startTyping()
       try {
-        let buffer = (await sf.get(url).set('X-Requested-With', 'snekfetch')).body
+        let buffer = (await sf.get(url)).body
         let type = is(buffer).type
         let res = await sf.post('http://isitporn.com')
           .attach('image', buffer, `photobox.${type}`)
@@ -31,7 +30,6 @@ module.exports = class IsItPorn extends Command {
       } catch (e) {
         if(e.status === 500) return message.reply("Looks like clearsite didn't like that picture. Try another one.")
         Util.sendError(message, e)
-        this.client.log(url)
       } finally {
         message.channel.stopTyping()
       }
