@@ -3,6 +3,8 @@ const { Util } = require('photobox-core')
 
 module.exports = class Help extends Command {
   get name() { return 'help' }
+  get aliases() { return ['❓','❔'] }
+  get cooldown() { return 0 }
 
   exec(message, args) {
     const prefix = this.client.config.prefix

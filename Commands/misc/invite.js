@@ -3,6 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class Invite extends Command {
   get name() { return 'invite' }
+  get aliases() { return ['✉'] }
   get cooldown() { return 0 }
 
   exec(message, args) {

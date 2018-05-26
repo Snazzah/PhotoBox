@@ -3,6 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class ServerInvite extends Command {
   get name() { return 'serverinvite' }
+  get aliases() { return ['🗄'] }
   get cooldown() { return 0 }
 
   exec(message, args) {
