@@ -4,7 +4,7 @@ const path = require('path')
 
 module.exports = class clippy extends ImageCode {
   async process(msg) {
-    let text = await Jimp.read(this.createCaption({
+    let text = await Jimp.read(await this.createCaption({
       text: msg.text,
       font: 'VcrOcdMono.ttf',
       size: '290x130',

@@ -1,7 +1,7 @@
 const { ImageCode } = require('photobox')
 const Jimp = require('jimp')
 
-module.exports = class huespin extends ImageCode {
+module.exports = class huespingif extends ImageCode {
   async process(msg) {
     let img = await Jimp.read(msg.url)
     if(img.bitmap.width > 300) img.resize(300, Jimp.AUTO);
