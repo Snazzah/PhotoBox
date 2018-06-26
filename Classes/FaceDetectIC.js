@@ -1,5 +1,6 @@
 const ImageCode = require('./ImageCode')
 const Jimp = require('jimp')
+const path = require('path')
 const _ = require('underscore')
 
 module.exports = class FaceDetectIC extends ImageCode {
