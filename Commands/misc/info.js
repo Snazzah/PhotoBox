@@ -6,7 +6,8 @@ module.exports = class Info extends Command {
   get aliases() { return ['ℹ'] }
   get cooldown() { return 1 }
 
-  exec(message, args) {
+  async exec(message, args) {
+    let servers = process.env.SHARDING_MANAGER ? await this.client.shard.fetchClientValues('guilds.size') : [this.client.guilds.size]
     let embed = {
       color: 0x9acccd,
       title: "PhotoBox Information",
@@ -39,7 +40,7 @@ module.exports = class Info extends Command {
         },
         {
           name: "**:file_cabinet: Servers**",
-          value: this.client.guilds.size.formatNumber(),
+          value: servers.reduce((prev, val) => prev + val, 0).formatNumber(),
           inline: true
         }
       ],
