@@ -18,7 +18,7 @@ module.exports = class CommandLoader {
       if(stat.isSymbolicLink()){
         let realPath = fs.readlinkSync(filePath)
         if(stat.isFile() && file.endsWith('.js')) {
-          load(realPath)
+          this.load(realPath)
         }else if(stat.isDirectory()){
           this.iterateFolder(realPath)
         }
