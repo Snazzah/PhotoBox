@@ -18,7 +18,7 @@
     "gif-encoder": "^0.6.1",
     "eventemitter3": "^2.0.3",
     "text-table": "^0.2.0",
-    "dbots": "^0.0.3",
+    "dbots": "^1.0.1",
     "snekfetch": "^4.0.0",
     "buffer-image-size": "^0.6.4",
     "jimp": "^0.2.27",
