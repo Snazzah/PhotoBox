@@ -16,7 +16,7 @@ module.exports = class Help extends Command {
           color: 0x9acccd,
           fields: [
             {name: "Usage", value: `${prefix}${command.name}${command.helpMeta.usage ? ` \`${command.helpMeta.usage}\`` : ''}`},
-            {name: "Cooldown", value: `${command.cooldown} seconds`, inline: true},
+            {name: "Cooldown", value: `${command.cooldown} second${command.cooldown === 1 ? '' : 's'}`, inline: true},
           ],
           description: command.helpMeta.description
         }
