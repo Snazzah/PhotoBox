@@ -1,7 +1,6 @@
 const { Command } = require('photobox')
 const { Util } = require('photobox-core')
 const sf = require('snekfetch')
-const qs = require('querystring')
 const tagRegex = /~\[(.+)\]/
 
 module.exports = class WeebSh extends Command {
