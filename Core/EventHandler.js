@@ -23,6 +23,7 @@ module.exports = class EventHandler {
         message.mentions.members = message.mentions.members.filter(u => u.id)
       }
       if(await this.client.cmds.processCooldown(Message, cname)) {
+        if(command.permissions.includes('nsfw') && !this.client.nsfw(Message)) return Message.reply("You need to run this command in a NSFW channel!")
         if(command.permissions.includes('attach') && !this.client.attach(Message)) return Message.reply("I need the permission `Attach Files` to use this command!")
         if(command.permissions.includes('embed') && !this.client.embed(Message)) return Message.reply("I need the permission `Embed Links` to use this command!")
         if(command.permissions.includes('owner') && !this.client.owner(Message)) return Message.reply("Only the owner of the bot can use this command!")

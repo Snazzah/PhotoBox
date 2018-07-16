@@ -100,31 +100,39 @@ module.exports = class PhotoBox extends Discord.Client {
 
   embed(message){
     let embedPerms = false
-    if(message.channel.type !== "text"){
+    if(message.channel.type !== "text")
       embedPerms = true;
-    }else{
-      if(message.channel.permissionsFor(this.user).has("EMBED_LINKS")){
+    else{
+      if(message.channel.permissionsFor(this.user).has("EMBED_LINKS"))
         embedPerms = true;
-      }
     }
 
     return embedPerms
   }
 
   attach(message){
-    let embedPerms = false
-    if(message.channel.type !== "text"){
-      embedPerms = true;
-    }else{
-      if(message.channel.permissionsFor(this.user).has("ATTACH_FILES")){
-        embedPerms = true;
-      }
+    let attachPerms = false
+    if(message.channel.type !== "text")
+      attachPerms = true;
+    else{
+      if(message.channel.permissionsFor(this.user).has("ATTACH_FILES"))
+        attachPerms = true;
     }
 
-    return embedPerms
+    return attachPerms
   }
 
   owner(message){
     return message.author.id === this.config.owner
+  }
+
+  nsfw(message){
+    let nsfwPerms = false
+    if(message.channel.type !== "text")
+      nsfwPerms = true;
+    else
+      nsfwPerms = message.channel.nsfw;
+
+    return nsfwPerms
   }
 }
