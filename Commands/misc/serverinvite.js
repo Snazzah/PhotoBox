@@ -7,7 +7,7 @@ module.exports = class ServerInvite extends Command {
   get cooldown() { return 0 }
 
   exec(message, args) {
-    message.channel.send('https://discord.io/snazzah')
+    message.channel.send('https://join.photobox.pw')
   }
 
   get helpMeta() { return {
