@@ -45,4 +45,9 @@ module.exports = class APICommand extends Command {
   }
 
   get permissions() { return ['embed'] }
+
+  get helpMeta() { return {
+    category: 'API',
+    description: `Get a random ${this.name}.`
+  } }
 }

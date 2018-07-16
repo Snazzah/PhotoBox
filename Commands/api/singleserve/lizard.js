@@ -5,8 +5,4 @@ module.exports = class Lizard extends APICommand {
   get aliases() { return ['🦎'] }
   get url() { return 'https://nekos.life/api/v2/img/lizard' }
   getImage(res) { return res.body.url }
-  get helpMeta() { return {
-    category: 'API',
-    description: 'Get a random lizard.'
-  } }
 }

@@ -5,8 +5,4 @@ module.exports = class Cat extends APICommand {
   get aliases() { return ['🐱', '😿', '😻', '😹', '😽', '😾', '🙀', '😸', '😺', '😼'] }
   get url() { return 'https://nekos.life/api/v2/img/meow' }
   getImage(res) { return res.body.url }
-  get helpMeta() { return {
-    category: 'API',
-    description: 'Get a random cat.'
-  } }
 }
