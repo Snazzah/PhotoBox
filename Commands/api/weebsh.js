@@ -22,7 +22,7 @@ module.exports = class WeebSh extends Command {
   }
 
   async exec(message, args) {
-    if(!this.client.apiKey('weebsh')) return message.reply('No Weeb.sh was given in the PhotoBox config.')
+    if(!this.client.apiKey('weebsh')) return message.reply('No Weeb.sh API key was given in the PhotoBox config.')
     if(!args[0]) return message.reply("You didn't supply a type or a tag.\n\n"
         + "For types, it is defined on the first argument (exluding tags), here are all the available types:\n"
         + "```\n" + this.types.join(', ') + "```"
