@@ -34,6 +34,6 @@ module.exports = class clyde extends ImageCode {
     canvas.composite(timestampText.opacity(0.2), 225, 40)
     canvas.composite(bottom, 0, height - bottom.bitmap.height)
 
-    this.sendJimp(canvas)
+    this.sendJimp(msg, canvas)
   }
 }
