@@ -3,6 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class Reload extends Command {
   get name() { return 'reload' }
+  get aliases() { return ['🔂'] }
 
   exec(message, args) {
     message.channel.send("Reloading commands...")

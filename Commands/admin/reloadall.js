@@ -3,6 +3,7 @@ const { Util } = require('photobox-core')
 
 module.exports = class ReloadAll extends Command {
   get name() { return 'reloadall' }
+  get aliases() { return ['🔁'] }
 
   async exec(message, args) {
     if(!process.env.SHARDING_MANAGER) return message.reply('The bot is not sharded.')
