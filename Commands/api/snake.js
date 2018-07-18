@@ -1,6 +1,5 @@
 const { Command } = require('photobox')
 const { Util } = require('photobox-core')
-const sf = require('snekfetch')
 
 module.exports = class Snake extends Command {
   get name() { return 'snake' }
