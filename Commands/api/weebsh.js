@@ -5,7 +5,7 @@ const tagRegex = /~\[(.+)\]/
 
 module.exports = class WeebSh extends Command {
   get name() { return 'weebsh' }
-  get aliases() { return ['wsh','<:nya:431499287025680384>'] }
+  get aliases() { return ['wsh','<:kumo:431499287025680384>'] }
   get cooldown() { return 2 }
 
   async preload() {
