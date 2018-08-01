@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox?ref=badge_shield)
+
 <div align="center">
   <img src="https://i-need.discord.cards/bb03c2.png" alt="logo" align="left" width=256>
   <a href="https://discordbots.org/bot/284134563381248000" >
@@ -35,3 +37,6 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 - [Pix2Pix](https://affinelayer.com/pixsrv/) by Affinelayer.com
 - [Dank Memer](https://github.com/Dank-Memer) by Melmsie
 - [Korra](https://github.com/weeb-services/korra) by weeb-services
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox?ref=badge_large)
