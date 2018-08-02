@@ -8,6 +8,9 @@
 </div>
 <br>
 
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox?ref=badge_shield)
+
+
 ### Installation
 If you are running an Ubuntu Server you can use `INSTALL-UNIX.sh` to easily install dependencies.
 You also need to [download the fonts](https://github.com/Snazzah/PhotoBox/blob/master/assets/fonts/WhereAreTheFonts.md).
@@ -35,3 +38,6 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 - [Pix2Pix](https://affinelayer.com/pixsrv/) by Affinelayer.com
 - [Dank Memer](https://github.com/Dank-Memer) by Melmsie
 - [Korra](https://github.com/weeb-services/korra) by weeb-services
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox?ref=badge_large)
