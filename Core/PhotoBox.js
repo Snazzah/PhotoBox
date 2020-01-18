@@ -77,7 +77,7 @@ module.exports = class PhotoBox extends Discord.Client {
 
   async dieGracefully() {
     this.log('Slowly dying...');
-    this.poster.stopInterval();
+    if(this.poster) this.poster.stopInterval();
     super.destroy();
     await this.db.disconnect();
     this.log('It\'s all gone...');

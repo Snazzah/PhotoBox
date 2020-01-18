@@ -5,8 +5,9 @@ const { EventEmitter } = require('eventemitter3');
 module.exports = class Database extends EventEmitter {
   constructor(client) {
     super();
-    this.reconnect = true;
+    this.reconnectAfterClose = true;
     this.client = client;
+    this.client.log('[DB]', 'Initialized');
   }
 
   connect({ host = 'localhost', port, password } = config) {
@@ -68,7 +69,7 @@ module.exports = class Database extends EventEmitter {
 
   expire(key, ttl) {
     return new Promise((resolve, reject) => {
-      this.redis.expire(key, ttl, (err, value) => {
+      this.redis.expire(this._p(key), ttl, (err, value) => {
         if(err) reject(err);
         resolve(value);
       });
@@ -78,7 +79,7 @@ module.exports = class Database extends EventEmitter {
 
   exists(key) {
     return new Promise((resolve, reject) => {
-      this.redis.exists(key, (err, value) => {
+      this.redis.exists(this._p(key), (err, value) => {
         if(err) reject(err);
         resolve(value === 1);
       });
@@ -87,7 +88,7 @@ module.exports = class Database extends EventEmitter {
 
   set(key, value) {
     return new Promise((resolve, reject) => {
-      this.redis.set(key, value, (err, res) => {
+      this.redis.set(this._p(key), value, (err, res) => {
         if(err) reject(err);
         resolve(res);
       });
@@ -100,6 +101,14 @@ module.exports = class Database extends EventEmitter {
     this.client.log('[DB]', 'Reconnected');
   }
 
+  disconnect() {
+    this.reconnectAfterClose = false;
+    return new Promise(resolve => {
+      this.redis.once('end', resolve);
+      this.redis.quit();
+    });
+  }
+
   onError(err) {
     this.client.log('[DB]', 'Error', err);
     this.emit('error', err);
@@ -108,6 +117,6 @@ module.exports = class Database extends EventEmitter {
   async onClose() {
     this.client.log('[DB]', 'Closed');
     this.emit('close');
-    await this.reconnect();
+    if(this.reconnectAfterClose) await this.reconnect();
   }
 };
