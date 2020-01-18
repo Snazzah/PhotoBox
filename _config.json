@@ -1,9 +1,12 @@
 {
   "discordToken": "",
   "prefix": "📷",
-  "owner": "158049329150427136",
+  "owner": "123456789012345678",
   "redis": {
-    "prefix": "photobox:"
+		"host": "120.0.0.1",
+		"port": 6379,
+		"prefix": "photobox:",
+    "password": ""
   },
   "discord": {
     "autoReconnect": true,
