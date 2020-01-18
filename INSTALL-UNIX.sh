@@ -6,5 +6,4 @@ sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
 sudo apt-get install imagemagick
 
 # NPM
-npm i opencv --build-from-source # installing regularly makes errors
 npm i

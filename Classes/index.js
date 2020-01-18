@@ -4,6 +4,5 @@ module.exports = {
   TextCommand: require('./TextCommand'),
   PhotoCommand: require('./PhotoCommand'),
   Pix2Pix: require('./Pix2Pix'),
-  ImageCode: require('./ImageCode'),
-  FaceDetectIC: require('./FaceDetectIC')
+  ImageCode: require('./ImageCode')
 }
