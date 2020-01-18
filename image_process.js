@@ -50,7 +50,7 @@ class ImageMaster {
     try {
       const resultMessage = msg;
       Object.keys(msg).map(k => {
-        if(msg[k] && msg[k].type === 'Buffer') resultMessage[k] = new Buffer(msg[k].data);
+        if(msg[k] && msg[k].type === 'Buffer') resultMessage[k] = Buffer.from(msg[k].data);
       });
 
       let code = null;
