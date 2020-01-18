@@ -6,43 +6,17 @@ module.exports = class Info extends Command {
   get cooldown() { return 1; }
 
   async exec(message) {
-    const servers = process.env.SHARDING_MANAGER ? await this.client.shard.fetchClientValues('guilds.size') : [this.client.guilds.size];
     const embed = {
       color: 0x9acccd,
       title: 'PhotoBox Information',
-      description: `:bulb: WS Ping: ${this.client.ping}`,
-      fields: [
-        {
-          name: '**:bust_in_silhouette: Creator**',
-          value: 'Snazzah\n[:bird: Twitter](https://twitter.com/SnazzahGuy)\n[:wrench: GitHub](https://github.com/Snazzah)\n[:file_cabinet: Discord](https://discord.io/snazzah)',
-          inline: true,
-        },
-        {
-          name: '**:file_folder: GitHub Repo**',
-          value: '[Snazzah/PhotoBox](https://github.com/Snazzah/PhotoBox)',
-          inline: true,
-        },
-        {
-          name: '**:computer: Version**',
-          value: this.client.pkg.version,
-          inline: true,
-        },
-        {
-          name: '**:clock: Uptime**',
-          value: process.uptime().toString().toHHMMSS() || '???',
-          inline: true,
-        },
-        {
-          name: '**:gear: Memory Usage**',
-          value: `[${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB]()`,
-          inline: true,
-        },
-        {
-          name: '**:file_cabinet: Servers**',
-          value: servers.reduce((prev, val) => prev + val, 0).formatNumber(),
-          inline: true,
-        },
-      ],
+      description: `**:bulb: WS Ping:** ${this.client.ws.ping}\n` +
+        '**:bust_in_silhouette: Creator:** Snazzah (https://snazzah.com/)\n' +
+        '**:file_folder: GitHub Repo:** [Snazzah/PhotoBox](https://github.com/Snazzah/PhotoBox)\n' +
+        `**:computer: Version:** ${this.client.pkg.version}\n` +
+        `**:clock: Uptime:** ${process.uptime().toString().toHHMMSS() || '???'}\n` +
+        `**:gear: Memory Usage:** ${(process.memoryUsage().heapUsed / 1000000).toFixed(2)} MB\n` +
+        `**:file_cabinet: Servers:** ${this.client.guilds.size.formatNumber()} MB\n` +
+        `**:file_cabinet: Shards:** ${this.client.ws.shards.size}\n`,
       thumbnail: {
         url: 'https://raw.githubusercontent.com/Snazzah/PhotoBox/master/avatar.png',
       },

@@ -16,10 +16,6 @@ module.exports = class PhotoBox extends Discord.Client {
     Object.assign(config.discord, {
       userAgent: { version: pkg.version },
     });
-    if(process.env.SHARDING_MANAGER) Object.assign(config.discord, {
-      shardCount: parseInt(process.env.SHARD_COUNT),
-      shardId: parseInt(process.env.SHARD_ID),
-    });
     super(config.discord);
     this.dir = mainDir;
     this.config = config;
@@ -59,8 +55,10 @@ module.exports = class PhotoBox extends Discord.Client {
   initPoster() {
     this.poster = new dbots.Poster({
       client: this,
+      useSharding: false,
       apiKeys: this.config.botlist,
       clientLibrary: 'discord.js',
+      voiceConnections: () => 0,
     });
 
     this.poster.post();
@@ -79,7 +77,7 @@ module.exports = class PhotoBox extends Discord.Client {
   // LOGGING
 
   get logPrefix() {
-    return process.env.SHARDING_MANAGER ? `[SHARD ${process.env.SHARD_ID}]` : '[BOT]';
+    return '[PHOTOBOX]';
   }
 
   log(...a) {

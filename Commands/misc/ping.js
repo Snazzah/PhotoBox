@@ -6,16 +6,16 @@ module.exports = class Ping extends Command {
 
   async exec(message) {
     const time1 = Date.now();
-    const m = await message.channel.send('', { embed: {
+    const m = await message.channel.send({ embed: {
       color: 0xffed58,
       title: '📷 .....',
     } });
 
-    const time = (Date.now() - time1) / 1000;
-    m.edit('', { embed: {
+    const time = Date.now() - time1;
+    m.edit({ embed: {
       color: 0xf7b300,
       title: '📸 Pong!',
-      description: `${time} second delay\n${this.client.ping} WS ping`,
+      description: `WS: ${time} ms\nREST: ${this.client.ws.ping}ms`,
     } });
   }
 

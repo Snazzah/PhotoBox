@@ -4,7 +4,7 @@ module.exports = class Restart extends Command {
   get name() { return 'restart'; }
 
   async exec(message) {
-    await message.channel.send('Restarting shard.');
+    await message.channel.send('Restarting...');
     process.exit(0);
   }
 
@@ -13,6 +13,6 @@ module.exports = class Restart extends Command {
 
   get helpMeta() { return {
     category: 'Admin',
-    description: 'Restarts the current shard',
+    description: 'Restarts the bot',
   }; }
 };
