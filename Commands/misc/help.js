@@ -1,4 +1,5 @@
 const { Command } = require('photobox');
+const config = require('config');
 
 module.exports = class Help extends Command {
   get name() { return 'help'; }
@@ -6,7 +7,7 @@ module.exports = class Help extends Command {
   get cooldown() { return 0; }
 
   exec(message, args) {
-    const prefix = this.client.config.prefix;
+    const prefix = config.get('prefix');
     if(args[0]) {
       const command = this.client.cmds.get(args[0]);
       if(!command) message.reply(`The command ${args[0]} was not found.`); else {

@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const fetch = require('node-fetch');
+const config = require('config');
 const tagRegex = /~\[(.+)\]/;
 
 module.exports = class WeebSh extends Command {
@@ -10,11 +11,11 @@ module.exports = class WeebSh extends Command {
   async preload() {
     if(!this.client.apiKey('weebsh')) return;
     this.tags = (await fetch('https://api.weeb.sh/images/tags', { headers: {
-      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json())).tags.sort();
     this.types = (await fetch('https://api.weeb.sh/images/types', { headers: {
-      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json())).types.sort();
   }
@@ -40,7 +41,7 @@ module.exports = class WeebSh extends Command {
       type: args[0],
     });
     const image = (await fetch('https://api.weeb.sh/images/random?' + query.toString(), { headers: {
-      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json()));
     message.reply({ embed: {

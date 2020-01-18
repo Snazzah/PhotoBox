@@ -12,13 +12,19 @@
 
 
 ### Installation
-If you are running an Ubuntu Server you can use `INSTALL-UNIX.sh` to easily install dependencies.
+You need [Node.JS](https://nodejs.org/) v10 (use [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)) or newer along with [NPM](https://npmjs.com). 
+You also need to install [ImageMagick](http://www.imagemagick.org/).
+```
+sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
+sudo apt-get install imagemagick
+```
 You also need to [download the fonts](https://github.com/Snazzah/PhotoBox/blob/master/assets/fonts/WhereAreTheFonts.md).
 
 ### Usage
-Both `sharding.js` and `main.js` can be used to start the bot.  
+You can run `npm start` to start the bot.
+Make sure to copy and paste `config/_default.json` into `config/default.json` and fill in the properties below **BEFORE** starting the bot.
 
-### config.json
+### config/default.json
 | Property | Type | Description |
 | -------- | ---- | ----------- |
 | discordToken | string | The token to the bot, duh. |
@@ -30,6 +36,7 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 | botlist | object | Bot list tokens supported by [dbots.js](https://github.com/Snazzah/dbots.js) |
 | api | object | api keys for certain commands |
 | api.weebsh | string | Wolke token for Weeb.sh |
+| api.giphy | string | API key for Giphy |
 | commands | string | The path to the folder where all the commands will be. |
 | image_codes | string | The path to the folder where all the image codes will be. |
 

@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const config = require('config');
 const dbots = require('dbots');
 const path = require('path');
 require('./Extend');
@@ -10,15 +11,13 @@ const StatTracker = require('./StatTracker');
 const ImageProcess = require('./ImageProcess');
 
 module.exports = class PhotoBox extends Discord.Client {
-  constructor({ configPath, packagePath, mainDir } = {}) {
-    const config = require(configPath || `${mainDir}/config.json`);
+  constructor({ packagePath, mainDir } = {}) {
     const pkg = require(packagePath || `${mainDir}/package.json`);
     Object.assign(config.discord, {
       userAgent: { version: pkg.version },
     });
     super(config.discord);
     this.dir = mainDir;
-    this.config = config;
     this.pkg = pkg;
     this.awaitedMessages = {};
     this.pageProcesses = {};
@@ -28,7 +27,7 @@ module.exports = class PhotoBox extends Discord.Client {
     this.on('disconnected', () => this.log('Disconnected'));
     this.on('reconnecting', () => this.warn('Reconnecting'));
     this.on('resume', r => this.warn('Resumed. Replayed events:', r));
-    if(this.config.debug) this.on('debug', s => this.debug(s));
+    if(config.get('debug')) this.on('debug', s => this.debug(s));
 
     process.once('uncaughtException', err => {
       this.error('Uncaught exception', err.stack);
@@ -40,23 +39,23 @@ module.exports = class PhotoBox extends Discord.Client {
 
   async start() {
     this.db = new Database(this);
-    this.db.connect(this.config.redis);
+    this.db.connect(config.get('redis'));
     await this.login();
-    this.IP = new ImageProcess(this.config.debug);
-    this.user.setActivity(`my memory skyrocket | ${this.config.prefix}help`, { type: 3 });
+    this.IP = new ImageProcess(config.get('debug'));
+    this.user.setActivity(`my memory skyrocket | ${config.get('prefix')}help`, { type: 3 });
     this.stats = new StatTracker(this);
-    this.cmds = new CommandLoader(this, path.join(this.dir, this.config.commands), this.config.debug);
+    this.cmds = new CommandLoader(this, path.join(this.dir, config.get('commands')), config.get('debug'));
     this.cmds.reload();
     this.cmds.preloadAll();
     this.eventHandler = new EventHandler(this);
-    if(Object.keys(this.config.botlist).length) this.initPoster();
+    if(Object.keys(config.get('botlist')).length) this.initPoster();
   }
 
   initPoster() {
     this.poster = new dbots.Poster({
       client: this,
       useSharding: false,
-      apiKeys: this.config.botlist,
+      apiKeys: config.get('botlist'),
       clientLibrary: 'discord.js',
       voiceConnections: () => 0,
     });
@@ -66,12 +65,12 @@ module.exports = class PhotoBox extends Discord.Client {
   }
 
   login() {
-    return super.login(this.config.discordToken);
+    return super.login(config.get('discordToken'));
   }
 
   apiKey(name) {
-    if(!this.config.api || !this.config.api[name]) return;
-    return this.config.api[name];
+    if(!config.get('api') || !config.get('api')[name]) return;
+    return config.get('api')[name];
   }
 
   // LOGGING
@@ -119,7 +118,7 @@ module.exports = class PhotoBox extends Discord.Client {
   }
 
   owner(message) {
-    return message.author.id === this.config.owner;
+    return message.author.id === config.get('owner');
   }
 
   nsfw(message) {

@@ -1,13 +1,10 @@
 const child_process = require('child_process');
+const config = require('config');
 
 module.exports = class ImageProcess {
-  constructor(debug) {
-    this.debug = debug;
-  }
-
   init() {
     const proc = child_process.fork('./image_process.js', { silent: true });
-    if(this.debug) proc.on('disconnect', () => console.log(`[IMG ${proc.pid}]`, 'disconnected'));
+    if(config.get('debug')) proc.on('disconnect', () => console.log(`[IMG ${proc.pid}]`, 'disconnected'));
     proc.on('error', err => console.log(`[IMG ${proc.pid}]`, 'error:', err));
     return proc;
   }
@@ -24,7 +21,7 @@ module.exports = class ImageProcess {
       proc.on('message', msg => {
         if(msg.code === 'log') console.log(`[IMG ${proc.pid}]`, ...msg.log);
         if(msg.code === 'ok') {
-          if(this.debug) console.log(`[IMG ${proc.pid}]`, 'loaded');
+          if(config.get('debug')) console.log(`[IMG ${proc.pid}]`, 'loaded');
           proc.stdout.on('data', data => {
             console.log(`[IMG ${proc.pid} to MAIN]`, data.toString());
           });
@@ -35,7 +32,7 @@ module.exports = class ImageProcess {
         }
         if(msg.quit) {
           proc.kill();
-          if(this.debug) console.log(`[IMG ${proc.pid}]`, `done "${msg.code}" in ${msg.uptime} seconds`);
+          if(config.get('debug')) console.log(`[IMG ${proc.pid}]`, `done "${msg.code}" in ${msg.uptime} seconds`);
           resolve(msg);
         }
       });

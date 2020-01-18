@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const config = require('./config');
+const config = require('config');
 
 class FolderIterator {
   constructor(ipath, cb) {
@@ -54,7 +54,7 @@ class ImageMaster {
       });
 
       let code = null;
-      const iter = new FolderIterator(config.image_codes, p => {
+      const iter = new FolderIterator(config.get('image_codes'), p => {
         const cls = require(p);
         if(cls.name != resultMessage.code) return;
         code = new cls(this);

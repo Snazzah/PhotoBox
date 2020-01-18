@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const fetch = require('node-fetch');
+const config = require('config');
 
 module.exports = class NekosLife extends Command {
   get name() { return 'nekoslife'; }
@@ -85,7 +86,7 @@ module.exports = class NekosLife extends Command {
       return message.reply('That tag is NSFW! Use that tag in a NSFW channel!');
 
     const image = (await fetch(`https://nekos.life/api/v2/img/${args[0]}`, { headers: {
-      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
     } }).then(r => r.json()));
     message.reply({ embed: {
       color: 0x9acccd,

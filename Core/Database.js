@@ -1,4 +1,5 @@
 const redis = require('redis');
+const config = require('config').get('redis');
 const { EventEmitter } = require('eventemitter3');
 
 module.exports = class Database extends EventEmitter {
@@ -8,7 +9,7 @@ module.exports = class Database extends EventEmitter {
     this.client = client;
   }
 
-  connect({ host = 'localhost', port, password }) {
+  connect({ host = 'localhost', port, password } = config) {
     return new Promise((resolve, reject) => {
       this.redis = redis.createClient({ host, port, password });
       this.client.log('[DB]', 'Connected');
@@ -27,7 +28,7 @@ module.exports = class Database extends EventEmitter {
     });
   }
 
-  _p(k) { return (this.client.config.redis.prefix || '') + k; }
+  _p(k) { return (config.get('prefix') || '') + k; }
 
   hget(key, hashkey) {
     return new Promise((resolve, reject) => {
