@@ -13,10 +13,11 @@ const ImageProcess = require('./ImageProcess');
 module.exports = class PhotoBox extends Discord.Client {
   constructor({ packagePath, mainDir } = {}) {
     const pkg = require(packagePath || `${mainDir}/package.json`);
-    Object.assign(config.discord, {
+    const discordConfig = JSON.parse(JSON.stringify(config.get('discord')));
+    Object.assign(discordConfig, {
       userAgent: { version: pkg.version },
     });
-    super(config.discord);
+    super(discordConfig);
     this.dir = mainDir;
     this.pkg = pkg;
     this.awaitedMessages = {};
@@ -31,7 +32,13 @@ module.exports = class PhotoBox extends Discord.Client {
 
     process.once('uncaughtException', err => {
       this.error('Uncaught exception', err.stack);
-      setTimeout(() => process.exit(0), 2500);
+      setTimeout(() => this.dieGracefully().then(() => process.exit(0)), 2500);
+    });
+
+    process.once('SIGINT', async () => {
+      this.log('Caught SIGINT');
+      await this.dieGracefully();
+      process.exit(0);
     });
 
     this.log('Client initialized');
@@ -66,6 +73,14 @@ module.exports = class PhotoBox extends Discord.Client {
 
   login() {
     return super.login(config.get('discordToken'));
+  }
+
+  async dieGracefully() {
+    this.log('Slowly dying...');
+    this.poster.stopInterval();
+    super.destroy();
+    await this.db.disconnect();
+    this.log('It\'s all gone...');
   }
 
   apiKey(name) {

@@ -5,6 +5,7 @@ module.exports = class Restart extends Command {
 
   async exec(message) {
     await message.channel.send('Restarting...');
+    await this.client.dieGracefully();
     process.exit(0);
   }
 
