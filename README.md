@@ -35,7 +35,6 @@ Both `sharding.js` and `main.js` can be used to start the bot.
 
 ### Sources
 - [Blargbot](https://github.com/Ratismal/blargbot) by Ratismal/stupid cat
-- [Pix2Pix](https://affinelayer.com/pixsrv/) by Affinelayer.com
 - [Dank Memer](https://github.com/Dank-Memer) by Melmsie
 - [Korra](https://github.com/weeb-services/korra) by weeb-services
 
