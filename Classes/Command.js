@@ -1,24 +1,28 @@
 module.exports = class Command {
   constructor(client) {
-    this.client = client
+    this.client = client;
   }
 
-  exec(Message, Args) { }
-  preload() { }
+  exec() {
+    return true;
+  }
+  preload() {
+    return true;
+  }
 
   sendToProcess(Message, data) {
-    return this.client.IP.sendMessage(Message, data)
+    return this.client.IP.sendMessage(Message, data);
   }
 
-  get cooldownAbs() { return this.cooldown * 1000 }
+  get cooldownAbs() { return this.cooldown * 1000; }
 
-  get aliases() { return [] }
-  get cooldown() { return 2 }
-  get listed() { return true }
-  get permissions() { return [] }
+  get aliases() { return []; }
+  get cooldown() { return 2; }
+  get listed() { return true; }
+  get permissions() { return []; }
   get helpMeta() { return {
     category: 'Misc',
-    description: "???",
-    usage: "???"
-  } }
-}
+    description: '???',
+    usage: '???',
+  }; }
+};

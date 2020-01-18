@@ -1,4 +1,4 @@
 module.exports = {
   PhotoBox: require('./PhotoBox'),
-  Util: require('./Util')
-}
+  Util: require('./Util'),
+};

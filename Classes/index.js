@@ -3,5 +3,5 @@ module.exports = {
   Command: require('./Command'),
   TextCommand: require('./TextCommand'),
   PhotoCommand: require('./PhotoCommand'),
-  ImageCode: require('./ImageCode')
-}
+  ImageCode: require('./ImageCode'),
+};

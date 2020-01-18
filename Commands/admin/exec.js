@@ -1,31 +1,24 @@
-const { Command } = require('photobox')
-const { Util } = require('photobox-core')
+const { Command } = require('photobox');
+const { exec } = require('child_process');
 
 module.exports = class Exec extends Command {
-  get name() { return 'exec' }
+  get name() { return 'exec'; }
 
   exec(Message, Args) {
     Message.channel.startTyping();
-    require("child_process").exec(Args.join(" "), (e, f, r)=>{
+    exec(Args.join(' '), (err, stdout, stderr) => {
       Message.channel.stopTyping();
-      if(e){
-        Message.channel.send(`\`\`\`js\nExecution ${e}\`\`\``);
-        return;
-      }
-      if(r!=''){
-        Message.channel.send(`\`\`\`js\nSTDOUT Error: ${r}\`\`\``);
-        return;
-      }
-      Message.channel.send(`\`\`\`${f}\`\`\``);
+      if(err) return Message.channel.send(`\`\`\`${err}\`\`\``);
+      Message.channel.send((stderr ? `\`\`\`js\nSTDOUT Error: ${stderr}\`\`\`` + '\n' : '') + `\`\`\`${stdout}\`\`\``);
     });
   }
 
-  get permissions() { return ['owner'] }
-  get listed() { return false }
+  get permissions() { return ['owner']; }
+  get listed() { return false; }
 
   get helpMeta() { return {
     category: 'Admin',
     usage: '<bash>',
     description: 'child_process.exec',
-  } }
-}
+  }; }
+};

@@ -1,7 +1,7 @@
-const { PhotoCommand } = require('photobox')
+const { PhotoCommand } = require('photobox');
 
 module.exports = class Distort extends PhotoCommand {
-  get name() { return 'distort' }
+  get name() { return 'distort'; }
 
   get helpMeta() { return {
     category: 'Filters',
@@ -9,7 +9,7 @@ module.exports = class Distort extends PhotoCommand {
     usage: '[url]',
     credit: {
       name: 'Blargbot By Ratismal/stupid cat',
-      url: 'https://github.com/Ratismal/blargbot'
-    }
-  } }
-}
+      url: 'https://github.com/Ratismal/blargbot',
+    },
+  }; }
+};

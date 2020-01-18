@@ -1,13 +1,13 @@
-const { ImageCode } = require('photobox')
-const Jimp = require('jimp')
+const { ImageCode } = require('photobox');
+const Jimp = require('jimp');
 
 module.exports = class jpeg extends ImageCode {
   async process(msg) {
-    let img = await Jimp.read(msg.url)
-    let w = img.bitmap.width;
-    let h = img.bitmap.width;
-    mg.resize(w/msg.multiplier,h/msg.multiplier).resize(w,h)
+    const img = await Jimp.read(msg.url);
+    const w = img.bitmap.width;
+    const h = img.bitmap.width;
+    img.resize(w / msg.multiplier, h / msg.multiplier).resize(w, h);
 
-    this.sendJimp(msg, img)
+    this.sendJimp(msg, img);
   }
-}
+};
