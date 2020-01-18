@@ -4,33 +4,33 @@
   "description": "A Discord Bot manipulating images",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "eslint": "eslint .",
+    "jshint": "jshint ."
   },
-  "author": "Snazzah (SnazzyPine25)",
+  "author": "Snazzah <suggesttosnazzy@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "gm": "^1.23.0",
-    "chalk": "^1.1.3",
-    "discord.js": "hydrabolt/discord.js#master",
-    "erlpack": "discordapp/erlpack#master",
-    "dnode": "^1.2.2",
-    "entities": "^1.1.1",
-    "gif-encoder": "^0.6.1",
-    "eventemitter3": "^2.0.3",
-    "text-table": "^0.2.0",
-    "dbots": "^1.0.1",
-    "snekfetch": "^4.0.0",
-    "buffer-image-size": "^0.6.4",
-    "jimp": "^0.2.27",
     "color-thief-jimp": "^2.0.2",
-    "webshot": "^0.18.0",
-    "twemoji": "^2.3.0",
-    "tinycolor2": "^1.4.1",
-    "cheerio": "^1.0.0-rc.2",
+    "dbots": "Snazzah/dbots.js#master",
+    "discord.js": "hydrabolt/discord.js#master",
+    "eventemitter3": "^2.0.3",
+    "gif-encoder": "^0.6.1",
+    "gm": "^1.23.0",
     "highlight.js": "^9.12.0",
-    "redis": "^2.8.0",
-    "simple-markdown": "^0.3.3",
+    "jimp": "^0.2.27",
+    "node-fetch": "^2.6.0",
     "photobox": "./Classes",
-    "photobox-core": "./Core"
+    "photobox-core": "./Core",
+    "redis": "^2.8.0",
+    "simple-markdown": "^0.7.2",
+    "text-table": "^0.2.0",
+    "tinycolor2": "^1.4.1",
+    "twemoji": "^2.3.0",
+    "webshot": "^0.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "jshint": "^2.10.2"
   }
 }
