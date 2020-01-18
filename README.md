@@ -18,7 +18,6 @@ You also need to install [ImageMagick](http://www.imagemagick.org/).
 sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
 sudo apt-get install imagemagick
 ```
-You also need to [download the fonts](https://github.com/Snazzah/PhotoBox/blob/master/assets/fonts/WhereAreTheFonts.md).
 
 ### Usage
 You can run `npm start` to start the bot.

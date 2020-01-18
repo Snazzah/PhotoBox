@@ -58,7 +58,6 @@ typings/
 .env
 
 # PhotoBox
-assets/fonts/*.ttf
 assets/discard/
 config.json
 old_photobox_*/
