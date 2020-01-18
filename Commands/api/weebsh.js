@@ -1,56 +1,59 @@
-const { Command } = require('photobox')
-const { Util } = require('photobox-core')
-const sf = require('snekfetch')
-const tagRegex = /~\[(.+)\]/
+const { Command } = require('photobox');
+const fetch = require('node-fetch');
+const tagRegex = /~\[(.+)\]/;
 
 module.exports = class WeebSh extends Command {
-  get name() { return 'weebsh' }
-  get aliases() { return ['wsh','<:kumo:431499287025680384>'] }
-  get cooldown() { return 2 }
+  get name() { return 'weebsh'; }
+  get aliases() { return ['wsh', '<:kumo:431499287025680384>']; }
+  get cooldown() { return 2; }
 
   async preload() {
-    if(!this.client.apiKey('weebsh')) return
-    let tags = await sf.get('https://api.weeb.sh/images/tags')
-      .set('User-Agent', `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`)
-      .set('Authorization', `Wolke ${this.client.apiKey('weebsh')}`);
-    let types = await sf.get('https://api.weeb.sh/images/types')
-      .set('User-Agent', `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`)
-      .set('Authorization', `Wolke ${this.client.apiKey('weebsh')}`);
-    this.tags = tags.body.tags.sort()
-    this.types = types.body.types.sort()
+    if(!this.client.apiKey('weebsh')) return;
+    this.tags = (await fetch('https://api.weeb.sh/images/tags', { headers: {
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
+    } }).then(r => r.json())).tags.sort();
+    this.types = (await fetch('https://api.weeb.sh/images/types', { headers: {
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
+    } }).then(r => r.json())).types.sort();
   }
 
   async exec(message, args) {
-    if(!this.client.apiKey('weebsh')) return message.reply('No Weeb.sh API key was given in the PhotoBox config.')
-    if(!args[0]) return message.reply("You didn't supply a type or a tag.\n\n"
-        + "For types, it is defined on the first argument (exluding tags), here are all the available types:\n"
-        + "```\n" + this.types.join(', ') + "```"
-        + "For tags, you must use it in this format: `~[tag name]`, here are all the available tags:\n"
-        + "```\n" + this.tags.join(', ') + "```")
+    if(!this.client.apiKey('weebsh')) return message.reply('No Weeb.sh API key was given in the PhotoBox config.');
+    if(!args[0]) return message.reply('You didn\'t supply a type or a tag.\n\n' +
+        'For types, it is defined on the first argument (exluding tags), here are all the available types:\n' +
+        '```\n' + this.types.join(', ') + '```' +
+        'For tags, you must use it in this format: `~[tag name]`, here are all the available tags:\n' +
+        '```\n' + this.tags.join(', ') + '```');
 
-    let tags = []
+    const tags = [];
     args = args.map(arg => {
       if(arg.match(tagRegex)) {
-        tags.push(arg.match(tagRegex)[1])
-        return false
+        tags.push(arg.match(tagRegex)[1]);
+        return false;
       }
-      return arg
-    }).filter(a => !!a)
-    let image = await sf.get('https://api.weeb.sh/images/random')
-      .set('User-Agent', `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`)
-      .set('Authorization', `Wolke ${this.client.apiKey('weebsh')}`)
-      .query({ tags: tags.join(','), type: args[0] })
+      return arg;
+    }).filter(a => !!a);
+    const query = new URLSearchParams({
+      tags: tags.join(','),
+      type: args[0],
+    });
+    const image = (await fetch('https://api.weeb.sh/images/random?' + query.toString(), { headers: {
+      'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${this.client.config.debug ? 'test' : 'production'}`,
+      Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
+    } }).then(r => r.json()));
     message.reply({ embed: {
       color: 0x9acccd,
-      image: { url: image.body.url }
-    } })
+      image: { url: image.url },
+    } });
   }
 
-  get permissions() { return ['embed'] }
+  get permissions() { return ['embed']; }
 
   get helpMeta() { return {
     category: 'API',
-    description: "Utilizes the Weeb.sh API",
-    usage: '[type] [~[tag]]'
-  } }
-}
+    description: 'Utilizes the Weeb.sh API',
+    usage: '[type] [~[tag]]',
+  }; }
+};
