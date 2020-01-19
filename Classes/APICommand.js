@@ -10,12 +10,19 @@ module.exports = class APICommand extends Command {
     this.doTimer(message, d => done = d);
     try{
       const res = await fetch(this.url);
-      if(res.status >= 200 && res.status < 300)
+      if(res.status >= 200 && res.status < 300) {
+        let body = await res.text();
+        try {
+          body = JSON.parse(body);
+        } catch (e) {
+          body = { text: body };
+        }
         await message.channel.send({ embed: {
           color: config.get('color'),
-          image: { url: this.getImage(await res.json()) },
+          image: { url: this.getImage(body) },
           footer: { text: `${message.author.tag} (${message.author.id})` },
         } });
+      }
       else await message.reply(`The service gave us a ${res.status}! Try again later!`);
 
       done();
