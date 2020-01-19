@@ -14,6 +14,7 @@ module.exports = class ImageOfTheDay extends Command {
       color: config.get('color'),
       title: image.copyright,
       url: image.copyrightlink,
+      footer: { text: `${message.author.tag} (${message.author.id})` },
       image: { url: `https://bing.com${image.url}` },
     } });
   }

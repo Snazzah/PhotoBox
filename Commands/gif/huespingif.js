@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const { Util } = require('photobox-core');
+const config = require('config');
 
 module.exports = class HueSpinGif extends Command {
   get name() { return 'huespingif'; }
@@ -15,7 +16,15 @@ module.exports = class HueSpinGif extends Command {
         const m = await message.reply('This command takes around a minute to generate. Please wait.');
         const buffer = await this.sendToProcess(message, { code: 'huespingif', url, channel:message.channel.id, _timeout:120000 });
         const now = Date.now();
-        message.channel.send(`Took ${(now - last) / 1000} seconds.`, { files: [{ attachment: buffer, name: 'huespin.gif' }] });
+        message.channel.send({
+          embed: {
+            title: `Took ${(now - last) / 1000} seconds.`,
+            color: config.get('color'),
+            image: { url: 'attachment://huespin.gif' },
+            footer: { text: `${message.author.tag} (${message.author.id})` },
+          },
+          files: [{ attachment: buffer, name: 'huespin.gif' }],
+        });
         m.delete();
       } catch (e) {
         Util.sendError(message, e);

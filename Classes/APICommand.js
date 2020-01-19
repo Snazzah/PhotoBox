@@ -14,6 +14,7 @@ module.exports = class APICommand extends Command {
         await message.channel.send({ embed: {
           color: config.get('color'),
           image: { url: this.getImage(await res.json()) },
+          footer: { text: `${message.author.tag} (${message.author.id})` },
         } });
       else await message.reply(`The service gave us a ${res.status}! Try again later!`);
 

@@ -27,6 +27,7 @@ module.exports = class Giphy extends Command {
         title: gif.title,
         url: gif.url,
         image: { url: gif.images.original.url },
+        footer: { text: `${message.author.tag} (${message.author.id})` },
         description: `Source: [${gif.source_tld}](${gif.source})\n\n` +
                      `[gif](${gif.images.original.url}) | [mp4](${gif.images.original.mp4}) | [looping mp4](${gif.images.looping.mp4}) | [webp](${gif.images.original.webp})\n\n\n` +
                      bottomText,

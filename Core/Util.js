@@ -9,6 +9,11 @@ module.exports = {
     if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
     return result.trim();
   },
+  stripPrefixClean(message, cleanNewLines = true) {
+    let result = message.cleanContent.replace(this.prefixRegex(message.client), '$1');
+    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
+    return result.trim();
+  },
   parsePath(e, p) {
     p.split('.').map(prop => e = e[prop]);
     return e;

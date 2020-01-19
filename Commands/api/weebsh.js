@@ -47,6 +47,7 @@ module.exports = class WeebSh extends Command {
     message.reply({ embed: {
       color: config.get('color'),
       image: { url: image.url },
+      footer: { text: `${message.author.tag} (${message.author.id})` },
     } });
   }
 

@@ -25,6 +25,7 @@ module.exports = class Gfycat extends Command {
         color: config.get('color'),
         title: gfy.gfyName,
         image: { url: gfy.gifUrl },
+        footer: { text: `${message.author.tag} (${message.author.id})` },
         description: `Tags: ${gfy.tags.join(', ')}\n\n` +
                     `[gif](${gfy.gifUrl}) | [mp4](${gfy.mp4Url}) | [webm](${gfy.webmUrl}) | [webp](${gfy.webpUrl}) | [mobile](${gfy.mobileUrl}) | [poster](${gfy.posterUrl})\n\n\n` +
                     bottomText,

@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const { Util } = require('photobox-core');
+const config = require('config');
 
 module.exports = class FakeMessage extends Command {
   get name() { return 'fakemessage'; }
@@ -45,7 +46,14 @@ module.exports = class FakeMessage extends Command {
         users: message.mentions.users.array().map(u => ({ id: u.id, name: message.mentions.members ? message.mentions.members.get(u.id).displayName : u.username })),
         roles: message.mentions.roles.array().map(r => ({ id: r.id, name: r.name, color: r.color, hcolor: r.hexColor })),
       });
-      message.channel.send({ files: [{ attachment: buffer, name: 'fakemessage.png' }] });
+      message.channel.send({
+        embed: {
+          color: config.get('color'),
+          image: { url: 'attachment://fakemessage.png' },
+          footer: { text: `${message.author.tag} (${message.author.id})` },
+        },
+        files: [{ attachment: buffer, name: 'fakemessage.png' }],
+      });
     } catch (e) {
       Util.sendError(message, e);
     } finally {

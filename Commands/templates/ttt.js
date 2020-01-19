@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const { Util } = require('photobox-core');
+const config = require('config');
 
 module.exports = class TTT extends Command {
   get name() { return 'ttt'; }
@@ -34,7 +35,14 @@ module.exports = class TTT extends Command {
         username: message.guild && message.guild.members.get(user.id) ? message.guild.members.get(user.id).displayName : user.username,
         text: text,
       });
-      message.channel.send({ files: [{ attachment: buffer, name: 'ttt.png' }] });
+      message.channel.send({
+        embed: {
+          color: config.get('color'),
+          image: { url: 'attachment://ttt.png' },
+          footer: { text: `${message.author.tag} (${message.author.id})` },
+        },
+        files: [{ attachment: buffer, name: 'ttt.png' }],
+      });
     } catch (e) {
       Util.sendError(message, e);
     } finally {
