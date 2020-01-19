@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i-need.discord.cards/bb03c2.png" alt="logo" align="left" width=256>
+  <img src="https://awau.moe/bb03c2.png" alt="logo" align="left" width=256>
   <a href="https://discordbots.org/bot/284134563381248000" >
     <img src="https://discordbots.org/api/widget/284134563381248000.svg" alt="PhotoBox" />
   </a>
