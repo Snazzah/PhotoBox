@@ -15,8 +15,8 @@
 You need [Node.JS](https://nodejs.org/) v10 (use [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)) or newer along with [NPM](https://npmjs.com). 
 You also need to install [ImageMagick](http://www.imagemagick.org/).
 ```
-sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
-sudo apt-get install imagemagick
+sudo apt install libcairo2-dev libjpeg-dev libgif-dev
+sudo apt install imagemagick
 ```
 
 ### Usage

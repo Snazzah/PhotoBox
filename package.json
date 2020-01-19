@@ -28,7 +28,7 @@
     "text-table": "^0.2.0",
     "tinycolor2": "^1.4.1",
     "twemoji": "^2.3.0",
-    "webshot": "^0.18.0"
+    "webshot": "Snazzah/node-webshot#master"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
