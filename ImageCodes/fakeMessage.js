@@ -2,7 +2,9 @@ const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
 const sm = require('simple-markdown');
 const twemoji = require('twemoji');
-const emojiData = require('../assets/emojis');
+const fs = require('fs');
+const path = require('path');
+const emojiData = require('../assets/fakemessage/emojis');
 const hljs = require('highlight.js');
 
 module.exports = class fakeMessage extends ImageCode {
@@ -21,110 +23,189 @@ module.exports = class fakeMessage extends ImageCode {
     } : null;
   }
 
-  parsing(msg) {
+  parse(msg) {
     const blockRegex = function(regex) {
       const match = function(source, state) {
-        if (state.inline) return null; else return regex.exec(source);
+        if (!state.inline) {
+          return null;
+        } else {
+          return regex.exec(source);
+        }
       };
       match.regex = regex;
       return match;
     };
 
-    return {
-      parseEmoji: function(content) {
-        if(content.match(/:(\w+):/g)) {
-          content.match(/:(\w+):/g).map(pe => {
-            emojiData.map(e => {
-              if(e.aliases.includes(pe.replace(/:/g, ''))) content = content.replace(pe, e.emoji);
-            });
+    const parseTwemoji = function(content) {
+      if(content.match(/:(\w+):/g)) {
+        content.match(/:(\w+):/g).map(pe => {
+          emojiData.map(e => {
+            if(e.aliases.includes(pe.replace(/:/g, ''))) content = content.replace(pe, e.emoji);
+          });
+        });
+      }
+      return twemoji.parse(content);
+    };
+
+    const rules = {
+      Array: sm.defaultRules.Array,
+      codeBlock: {
+        order: sm.defaultRules.codeBlock.order,
+        match: blockRegex(/^```(\n*)((.|\n)+[^\n])(\n*)```/),
+        parse: function(capture) {
+          const onlyOneLine = capture[2].split('\n').length === 1;
+          const lang = hljs.getLanguage(capture[2].split('\n')[0]);
+          const result = {};
+          if(lang && !onlyOneLine) {
+            result.lang = lang.aliases[0];
+            result.content = capture[2].split('\n').slice(1).join('\n');
+          } else {
+            result.content = capture[2];
+          }
+          return result;
+        },
+        react: sm.defaultRules.codeBlock.react,
+        html: node => this.loadHTMLFile('codeblock', {
+          lang: node.lang || '',
+          text: node.lang ? hljs.highlight(node.lang, node.content).value : node.content,
+        }),
+      },
+      blockQuote: {
+        order: sm.defaultRules.blockQuote.order,
+        match: blockRegex(/^\n?(>[^\n]+([^\n]+)*)+/),
+        parse: sm.defaultRules.blockQuote.parse,
+        react: sm.defaultRules.blockQuote.react,
+        html: (node, output, state) => this.loadHTMLFile('blockquote', {
+          text: output(node.content, state).join('').trim(),
+        }),
+      },
+      paragraph: {
+        order: sm.defaultRules.paragraph.order,
+        match: sm.defaultRules.paragraph.match,
+        parse: sm.defaultRules.paragraph.parse,
+        react: sm.defaultRules.paragraph.react,
+        html: (node, output, state) => output(node.content, state).join(''),
+      },
+      escape: sm.defaultRules.escape,
+      autolink: sm.defaultRules.autolink,
+      url: {
+        order: sm.defaultRules.url.order,
+        match: sm.defaultRules.url.match,
+        parse: function(capture) {
+          return {
+            content: capture[1],
+          };
+        },
+        react: sm.defaultRules.link.react,
+        html: node => {
+          const url = new URL(node.content);
+          return this.loadHTMLFile('anchor', {
+            url: url.toString(),
+          });
+        },
+      },
+      em: sm.defaultRules.em,
+      strong: sm.defaultRules.strong,
+      u: sm.defaultRules.u,
+      del: sm.defaultRules.del,
+      inlineCode: sm.defaultRules.inlineCode,
+      text: sm.defaultRules.text,
+    };
+
+    const parser = sm.parserFor(rules);
+    const marked = source => sm.reactFor(sm.ruleOutput(rules, 'html'))(parser(source + '\n\n', { inline: false }))[0];
+    return parseTwemoji(marked(msg.text.replace(/```([^`\n]+)```/g, '```\n$1\n```'))
+      .replace(/(?:\\)?&lt;(a)?:[0-9a-z-_]+:(\d+)&gt;/ig, function(m, anim, id) {
+        if (m.includes('\\')) return m.replace(m, m.substr(1));
+        return m.replace(m, `<img class="emoji" src="https://cdn.discordapp.com/emojis/${id}.${anim ? 'gif' : 'png'}"/>`);
+      }))
+      .replace(/@\u200b?(everyone|here)/g, text => this.loadHTMLFile('mention', { text }))
+      .replace(/&lt;#([0-9]+)&gt;/g, (m, r) => {
+        let channel = '#deleted-channel';
+        const csel = msg.channels.filter(c => c.id === r)[0];
+        if (csel !== undefined)
+          channel = this.loadHTMLFile('mention', { text: `#${csel.name}` });
+        m = m.replace(m, channel);
+        return m;
+      }).replace(/&lt;@&amp;([0-9]+)&gt;/g, (m, r) => {
+        let role = '@deleted-role';
+        const rsel = msg.roles.filter(c => c.id === r)[0];
+        if (rsel !== undefined) {
+          const rgb = this.hexToRgb(rsel.hcolor);
+          role = this.loadHTMLFile(rsel.color !== 0 ? 'rolemention' : 'mention', {
+            text: `@${rsel.name}`,
+            style: `style="color: ${rsel.hcolor}; background-color: rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1); border: none;"`,
           });
         }
-        return content;
-      },
-      parseTwemoji: function(content) {
-        return twemoji.parse(this.parseEmoji(content));
-      },
-      parse: function(content) {
-        const rules = sm.defaultRules;
-        delete rules.heading;
-        delete rules.nptable;
-        delete rules.lheading;
-        delete rules.hr;
-        delete rules.fence;
-        delete rules.blockQuote;
-        delete rules.list;
-        delete rules.def;
-        delete rules.table;
-        delete rules.mailto;
-        delete rules.link;
-        delete rules.image;
-        delete rules.reflink;
-        delete rules.refimage;
-        delete rules.br;
-        rules.codeBlock = {
-          match: blockRegex(/^(?: {4}[^\n]+\n*)+(?:\n *)+\n/),
-          parse: function(capture) {
-            return { lang: undefined, content: capture[0].replace(/^ {4}/gm, '').replace(/\n+$/, '') };
-          },
-          // eslint-disable-next-line no-empty-function
-          react: () => {},
-          html: function(node) {
-            return '<pre><code>' + node.lang ? hljs.highlight(node.lang, node.content) : node.content + '</pre></code>';
-          },
-        };
+        m = m.replace(m, role);
+        return m;
+      }).replace(/&lt;@!?([0-9]+)&gt;/g, (m, r) => {
+        let user = this.loadHTMLFile('mention', { text: m });
+        const usel = msg.users.filter(u => u.id === r)[0];
+        if (usel !== undefined)
+          user = this.loadHTMLFile('mention', { text: `@${usel.name}` });
+        m = m.replace(m, user);
+        return m;
+      });
+  }
 
-        const parser = sm.parserFor(rules);
-        const marked = source => sm.reactFor(sm.ruleOutput(rules, 'html'))(parser(source + '\n\n', { inline: false }))[0];
-        return this.parseTwemoji(marked(content.replace(/```([^\n]?(.|\n)+[^\n]?)```/g, '```\n$1\n```')).replace(/https?:\/\/[\S]*/ig, function(m) {
-          return m.replace(m, '<a href="' + m + '">' + m + '</a>');
-        }).replace(/(?:\\)?(?:&lt;){1,2}:[0-9a-z--_]+:(\d+)&gt;(?:\d+)?(?:&gt;)?/ig, function(m, r) {
-          if (m.includes('\\')) return m.replace(m, m.substr(1));
-          return m.replace(m, `<img class="emoji" src="https://cdn.discordapp.com/emojis/${r}.png"/>`);
-        })).replace(/@\u200b?(everyone|here)/g, '<span class="mention">@$1</span>')
-          .replace(/&lt;#([0-9]+)&gt;/g, function(m, r) {
-            let channel = '#deleted-channel';
-            const csel = msg.channels.filter(c=>c.id === r)[0];
-            if (csel !== undefined) channel = `<span class="mention">#${csel.name}</span>`;
-            m = m.replace(m, channel);
-            return m;
-          }).replace(/&lt;@&amp;([0-9]+)&gt;/g, function(m, r) {
-            let role = '@deleted-role';
-            const rsel = msg.roles.filter(c=>c.id === r)[0];
-            if (rsel !== undefined) role = `<component class="mention"${rsel.color !== 0 ? `style="color: ${rsel.hcolor}; background-color: rgba(${this.hexToRgb(rsel.hcolor).r}, ${this.hexToRgb(rsel.hcolor).g}, ${this.hexToRgb(rsel.hcolor).b}, 0.0980392); border: none;"` : ''}>@${rsel.name}</component>`;
-            m = m.replace(m, role);
-            return m;
-          }).replace(/&lt;@!?([0-9]+)&gt;/g, function(m, r) {
-            let user = '<span class="mention">' + m + '</span>';
-            const usel = msg.users.filter(u=>u.id === r)[0];
-            if (usel !== undefined) user = `<span class="mention">@${usel.name}</span>`;
-            m = m.replace(m, user);
-            return m;
-          });
-      },
+  loadHTMLFile(file, replacements) {
+    let html = this.loadFile(`${file}.html`);
+    if(Object.keys(replacements).length)
+      replacements.keyValueForEach((k, v) => {
+        html = html.replace(new RegExp(`\\$${k.toUpperCase()}\\$`, 'g'), v);
+      });
+    return html;
+  }
+
+  loadFile(file) {
+    return fs.readFileSync(path.join(__dirname, '..', 'assets', 'fakemessage', file), { encoding: 'utf8' });
+  }
+
+  htmlReplace(text) {
+    const SANITIZE_TEXT_CODES = {
+      '<': '&lt;',
+      '>': '&gt;',
+      '&': '&amp;',
+      '"': '&quot;',
+      '\'': '&#x27;',
+      '/': '&#x2F;',
+      '`': '&#96;',
     };
+    return text.replace(/[<>&"']/g, chr => SANITIZE_TEXT_CODES[chr]);
   }
 
   async process(msg) {
-    const Parsing = this.parsing(msg);
+    const parsedMessage = this.parse(msg);
     const date = new Date();
-    const html = '<link href="https://canary.discordapp.com/assets/d435f128098ed049af15.css" type="text/css" rel="stylesheet"><link href="https://canary.discordapp.com/assets/349f8ee32fafc1011b0d.css" type="text/css" rel="stylesheet"><style>.scroller::-webkit-scrollbar{width:0px!important;}</style><div id="app-mount"><div data-reactroot="" class="platform-osx"><div><div class="app flex-vertical theme-dark"><div class="layers flex-vertical flex-spacer"><div class="layer"><section class="flex-horizontal flex-spacer"><div class="chat flex-vertical flex-spacer"><div class="content flex-spacer flex-horizontal"><div class="flex-spacer flex-vertical" style="position: relative;"><div class="messages-wrapper"><div class="scroller-wrap"><div class="scroller messages"><div class="message-group hide-overflow"><div class="avatar-large stop-animation" style="background-image: url(&quot;$AVATAR$&quot;);"></div><div class="comment"><div class="message $MENTIONED$ first"><div class="body"><h2><span class="username-wrapper"><strong class="user-name" style="color: $COLOR$;">$USERNAME$</strong></span><span class="highlight-separator"> - </span><span class="timestamp">$TIMESTAMP$</span></h2><div class="message-text"><div class="markup">$MSG_TEXT$</div></div></div><div class="accessory"></div></div></div></div></div></div></div></div></div></div></section></div></div></div></div></div></div>'
-      .replace('$MSG_TEXT$', Parsing.parse(msg.text.replace('>', '&gt;').replace('<', '&lt;')))
-      .replace('$USERNAME$', msg.username.replace('>', '&gt;').replace('<', '&lt;') + (msg.bot ? '<span class="bot-tag">BOT</span>' : ''))
-      .replace('$COLOR$', msg.color || '#fff')
-      .replace('$AVATAR$', msg.avatar)
-      .replace('$MENTIONED$', msg.mentioned ? 'mentioned' : '')
-      .replace('$TIMESTAMP$', `Today at ${date.getHours() + 1 > 12 ? date.getHours() - 11 : date.getHours() + 1}:${date.getMinutes().toString().length === 1 ? '0' + date.getMinutes() : date.getMinutes()} ${date.getHours() + 1 > 12 ? 'PM' : 'AM'}`);
-    const textcroppinghtml = '<link href="https://canary.discordapp.com/assets/d435f128098ed049af15.css" type="text/css" rel="stylesheet"><link href="https://canary.discordapp.com/assets/349f8ee32fafc1011b0d.css" type="text/css" rel="stylesheet"><style>.scroller::-webkit-scrollbar{width:0px!important;}</style><div id="app-mount"><div data-reactroot="" class="platform-osx"><div><div class="app flex-vertical theme-dark"><div class="layers flex-vertical flex-spacer"><div class="layer"><section class="flex-horizontal flex-spacer"><div class="chat flex-vertical flex-spacer"><div class="content flex-spacer flex-horizontal"><div class="flex-spacer flex-vertical" style="position: relative;"><div class="messages-wrapper"><div class="scroller-wrap"><div class="scroller messages"><div class="message-group hide-overflow"><div class="comment"><div class="message $MENTIONED$ first"><div class="body"><h2><span class="username-wrapper"></span><span class="highlight-separator"> - </span></h2><div class="message-text"><div class="markup">$MSG_TEXT$</div></div></div><div class="accessory"></div></div></div></div></div></div></div></div></div></div></section></div></div></div></div></div></div>'
-      .replace('$MSG_TEXT$', Parsing.parse(msg.text.replace('>', '&gt;').replace('<', '&lt;')))
-      .replace('$MENTIONED$', msg.mentioned ? 'mentioned' : '');
+    const html = this.loadHTMLFile('main', {
+      theme: 'dark',
+      message: parsedMessage,
+      username: this.htmlReplace(msg.username) + (msg.bot ? this.loadHTMLFile('bottag') : ''),
+      color: msg.color || '#fff',
+      avatar: msg.avatar,
+      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+      timestamp: `Today at ${date.getHours() + 1 > 12 ? date.getHours() - 11 : date.getHours() + 1}:${date.getMinutes().toString().length === 1 ? '0' + date.getMinutes() : date.getMinutes()} ${date.getHours() + 1 > 12 ? 'PM' : 'AM'}`,
+    });
+    const textCropHTML = this.loadHTMLFile('main', {
+      theme: 'dark',
+      message: parsedMessage,
+      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+    });
 
-    const wsbuff = await this.webshotHTML(html, 880, 500);
-    const tcb = await this.webshotHTML(textcroppinghtml, 880, 500);
-    const img = await Jimp.read(wsbuff);
-    const tcbi = await Jimp.read(tcb);
-    tcbi.autocrop(false);
-    const final = new Jimp(900, tcbi.bitmap.height + 62, 0x36393eff);
-    final.composite(img, 0, 0);
+    const webShotBuff = await this.webshotHTML(html, {
+      width: 500,
+      height: 500,
+    });
+
+    const textCropBuffer = await this.webshotHTML(textCropHTML, {
+      width: 500,
+      height: 500,
+    });
+    const img = await Jimp.read(webShotBuff);
+    const textCropImg = (await Jimp.read(textCropBuffer)).autocrop(false).autocrop(false);
+    const final = new Jimp(500, textCropImg.bitmap.height + 40);
+    final.composite(img, 0, 0).autocrop(false);
     this.sendJimp(msg, final);
   }
 };

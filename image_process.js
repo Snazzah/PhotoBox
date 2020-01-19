@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('config');
+require('./Core/Extend');
 
 class FolderIterator {
   constructor(ipath, cb) {

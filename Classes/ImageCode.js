@@ -142,15 +142,16 @@ module.exports = class ImageCode {
     });
   }
 
-  webshotHTML(html, width, height) {
+  webshotHTML(html, { width, height, css }) {
     return new Promise(resolve => {
       const stream = webshot(html, {
         siteType: 'html',
         shotSize: {
-          width: width,
-          height: height,
+          width,
+          height,
         },
         quality: 100,
+        customCSS: css,
       });
       const bufferArray = [];
       stream.on('data', buffer => bufferArray.push(buffer));

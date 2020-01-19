@@ -4,11 +4,10 @@ module.exports = {
   prefixRegex(client) {
     return new RegExp(`^(?:<@!?${client.user.id}>|${config.get('prefix')}|@?${client.user.username})\\s?(\\n|.)`, 'i');
   },
-  stripPrefix(message) {
-    return message.content.replace(this.prefixRegex(message.client), '$1').replace(/\s\s+/g, ' ').trim();
-  },
-  stripPrefixClean(message) {
-    return message.cleanContent.replace(this.prefixRegex(message.client), '$1').replace(/\s\s+/g, ' ').trim();
+  stripPrefix(message, cleanNewLines = true) {
+    let result = message.content.replace(this.prefixRegex(message.client), '$1');
+    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
+    return result.trim();
   },
   parsePath(e, p) {
     p.split('.').map(prop => e = e[prop]);

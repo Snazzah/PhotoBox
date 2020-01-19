@@ -44,7 +44,7 @@ module.exports = class ImageProcess {
       msg.id = message.id;
       msg.shardid = this.shardid;
       this.send(msg).then(res => {
-        resolve(new Buffer(res.buffer, 'base64'), res);
+        resolve(Buffer.from(res.buffer, 'base64'), res);
       }).catch(reject);
     });
   }

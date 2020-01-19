@@ -7,28 +7,29 @@ module.exports = class FakeMessage extends Command {
   get cooldown() { return 3; }
 
   async exec(message, args) {
-    let text = args.join(' ');
+    let text = Util.stripPrefix(message, false).split(' ').slice(1);
     let user = message.author;
     if(!args[0])
       return message.channel.send('Provide text for this to work!');
     if(args[0].match(/\[id=(\d+)\]/g)) {
       const id = args[0].replace(/\[id=(\d+)\]/g, '$1');
       if(!this.client.users.get(id)) {
-        user = await this.client.fetchUser(id);
+        user = await this.client.users.fetch(id);
         if(!user) {
           message.reply('Invalid ID!');
           return;
         }
-        text = text.split(' ').slice(1).join(' ');
+        text = text.slice(1);
       }else{
         user = this.client.users.get(id);
-        text = text.split(' ').slice(1).join(' ');
+        text = text.slice(1);
       }
-    }else if(message.mentions.users.size >= 1) {
+    } else if(message.mentions.users.size >= 1) {
       user = message.mentions.users.array()[0];
-      text = text.split(' ').slice(1).join(' ');
+      text = text.slice(1);
     }
-    if(!text || text.trim() === '')
+    text = text.join(' ').trim();
+    if(!text)
       return message.channel.send('Provide text for this to work!');
     message.channel.startTyping();
     try {
