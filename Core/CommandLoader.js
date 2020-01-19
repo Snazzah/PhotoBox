@@ -36,6 +36,7 @@ module.exports = class CommandLoader {
     const cmd = new cls(this.client);
     cmd.path = commandPath;
     this.commands.set(cmd.name, cmd);
+    return cmd;
   }
 
   reload() {

@@ -29,7 +29,11 @@ module.exports = class EventHandler {
         if(command.permissions.includes('owner') && !this.client.owner(message)) return message.reply('Only the owner of the bot can use this command!');
         this.client.stats.bumpStat('commands');
         this.client.stats.bumpCommandStat(command.name);
-        command.exec(message, args);
+        try {
+          await command.exec(message, args);
+        } catch (e) {
+          Util.sendError(message, e);
+        }
       } else {
         const cd = await this.client.db.hget(`cooldowns:${message.author.id}`, command.name);
         message.reply(`This command needs to cool down! *(${Math.ceil(command.cooldownAbs - (Date.now() - cd))})*`);
