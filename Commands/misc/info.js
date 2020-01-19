@@ -1,4 +1,5 @@
 const { Command } = require('photobox');
+const config = require('config');
 
 module.exports = class Info extends Command {
   get name() { return 'info'; }
@@ -7,7 +8,7 @@ module.exports = class Info extends Command {
 
   async exec(message) {
     const embed = {
-      color: 0x9acccd,
+      color: config.get('color'),
       title: 'PhotoBox Information',
       description: `**:bulb: WS Ping:** ${this.client.ws.ping}\n` +
         '**:bust_in_silhouette: Creator:** Snazzah (https://snazzah.com/)\n' +

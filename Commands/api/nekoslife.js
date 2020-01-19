@@ -89,7 +89,7 @@ module.exports = class NekosLife extends Command {
       'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
     } }).then(r => r.json()));
     message.reply({ embed: {
-      color: 0x9acccd,
+      color: config.get('color'),
       image: { url: image.url },
     } });
   }

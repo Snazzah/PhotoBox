@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const { Util } = require('photobox-core');
+const config = require('config');
 
 module.exports = class Snake extends Command {
   get name() { return 'snake'; }
@@ -7,7 +8,7 @@ module.exports = class Snake extends Command {
 
   async exec(message) {
     message.channel.send({ embed: {
-      color: 0x9acccd,
+      color: config.get('color'),
       image: { url: `http://fur.im/snek/i/${Util.rInt(1, 874)}.png` },
     } });
   }

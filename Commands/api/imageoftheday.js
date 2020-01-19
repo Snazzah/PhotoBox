@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const fetch = require('node-fetch');
+const config = require('config');
 
 module.exports = class ImageOfTheDay extends Command {
   get name() { return 'imageoftheday'; }
@@ -10,7 +11,7 @@ module.exports = class ImageOfTheDay extends Command {
     const image = res.images[0];
 
     message.channel.send({ embed: {
-      color: 0x9acccd,
+      color: config.get('color'),
       title: image.copyright,
       url: image.copyrightlink,
       image: { url: `https://bing.com${image.url}` },

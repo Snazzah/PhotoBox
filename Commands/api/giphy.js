@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const fetch = require('node-fetch');
+const config = require('config');
 
 module.exports = class Giphy extends Command {
   get name() { return 'giphy'; }
@@ -22,7 +23,7 @@ module.exports = class Giphy extends Command {
     const bottomText = res.data[0] ? `Other results: ${res.data.map(g => `[${g.title}](${g.url})`).join(', ')}` : '';
     message.channel.send({
       embed: {
-        color: 0x9acccd,
+        color: config.get('color'),
         title: gif.title,
         url: gif.url,
         image: { url: gif.images.original.url },

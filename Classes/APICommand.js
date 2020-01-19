@@ -1,5 +1,6 @@
 const Command = require('./Command');
 const fetch = require('node-fetch');
+const config = require('config');
 
 module.exports = class APICommand extends Command {
   get cooldown() { return 1; }
@@ -11,7 +12,7 @@ module.exports = class APICommand extends Command {
       const res = await fetch(this.url);
       if(res.status >= 200 && res.status < 300)
         await message.channel.send({ embed: {
-          color: 0x9acccd,
+          color: config.get('color'),
           image: { url: this.getImage(await res.json()) },
         } });
       else await message.reply(`The service gave us a ${res.status}! Try again later!`);

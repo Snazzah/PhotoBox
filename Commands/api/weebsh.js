@@ -45,7 +45,7 @@ module.exports = class WeebSh extends Command {
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json()));
     message.reply({ embed: {
-      color: 0x9acccd,
+      color: config.get('color'),
       image: { url: image.url },
     } });
   }

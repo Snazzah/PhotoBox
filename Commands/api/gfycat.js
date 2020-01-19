@@ -1,5 +1,6 @@
 const { Command } = require('photobox');
 const fetch = require('node-fetch');
+const config = require('config');
 
 module.exports = class Gfycat extends Command {
   get name() { return 'gfycat'; }
@@ -21,7 +22,7 @@ module.exports = class Gfycat extends Command {
     const bottomText = res[0] ? `Other results: ${res.map(g => `[${g.gfyName}](${g.gifUrl})`).join(', ')}` : '';
     message.channel.send({
       embed: {
-        color: 0x9acccd,
+        color: config.get('color'),
         title: gfy.gfyName,
         image: { url: gfy.gifUrl },
         description: `Tags: ${gfy.tags.join(', ')}\n\n` +

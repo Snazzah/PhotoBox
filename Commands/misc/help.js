@@ -13,7 +13,7 @@ module.exports = class Help extends Command {
       if(!command) message.reply(`The command ${args[0]} was not found.`); else {
         const embed = {
           title: `${prefix}${command.name}`,
-          color: 0x9acccd,
+          color: config.get('color'),
           fields: [
             { name: 'Usage', value: `${prefix}${command.name}${command.helpMeta.usage ? ` \`${command.helpMeta.usage}\`` : ''}` },
             { name: 'Cooldown', value: `${command.cooldown} second${command.cooldown === 1 ? '' : 's'}`, inline: true },
@@ -37,7 +37,7 @@ module.exports = class Help extends Command {
       }
     } else {
       const embed = {
-        color: 0x9acccd,
+        color: config.get('color'),
         description: '[PhotoBox](https://github.com/Snazzah/PhotoBox) By Snazzah',
         footer: {
           text: `\`${prefix}help [command]\` for more info`,

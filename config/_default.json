@@ -2,6 +2,7 @@
   "discordToken": "",
   "prefix": "📷",
   "owner": "123456789012345678",
+  "color": 10144973,
   "redis": {
 		"host": "120.0.0.1",
 		"port": 6379,
