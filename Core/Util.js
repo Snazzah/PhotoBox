@@ -6,12 +6,12 @@ module.exports = {
   },
   stripPrefix(message, cleanNewLines = true) {
     let result = message.content.replace(this.prefixRegex(message.client), '$1');
-    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
+    if(cleanNewLines) result = result.replace(/ +/g, ' ');
     return result.trim();
   },
   stripPrefixClean(message, cleanNewLines = true) {
     let result = message.cleanContent.replace(this.prefixRegex(message.client), '$1');
-    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
+    if(cleanNewLines) result = result.replace(/ +/g, ' ');
     return result.trim();
   },
   parsePath(e, p) {
