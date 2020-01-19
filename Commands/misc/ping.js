@@ -2,6 +2,7 @@ const { Command } = require('photobox');
 
 module.exports = class Ping extends Command {
   get name() { return 'ping'; }
+  get aliases() { return ['🏓', 'pong']; }
   get cooldown() { return 1; }
 
   async exec(message) {
@@ -15,7 +16,7 @@ module.exports = class Ping extends Command {
     m.edit({ embed: {
       color: 0xf7b300,
       title: '📸 Pong!',
-      description: `WS: ${time} ms\nREST: ${this.client.ws.ping}ms`,
+      description: `WS: ${time} ms\nREST: ${this.client.ws.ping} ms`,
     } });
   }
 
