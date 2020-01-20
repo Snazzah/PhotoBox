@@ -148,18 +148,26 @@ module.exports = class ImageCode {
     });
   }
 
-  async perspectify(jimpImage, { topLeft, topRight, bottomLeft, bottomRight }) {
+  async perspectify(jimpImage, { topLeft, topRight, bottomLeft, bottomRight, canvas = null }) {
     if(jimpImage.constructor.name !== 'Jimp')
       jimpImage = await new Jimp(await this.toBuffer(jimpImage));
 
-    const imImage = im(await this.jimpBuffer(jimpImage));
+    let imageToPerspect = jimpImage;
+    const imgWidth = jimpImage.bitmap.width;
+    const imgHeight = jimpImage.bitmap.height;
+    if(canvas) {
+      const jimpCanvas = new Jimp(canvas.width, canvas.height, canvas.color);
+      jimpCanvas.composite(jimpImage, 0, 0);
+      imageToPerspect = jimpCanvas;
+    }
+    const imImage = im(await this.jimpBuffer(imageToPerspect));
     imImage.command('convert');
     imImage.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     imImage.out([
       [topLeft, 0, 0],
-      [topRight, jimpImage.bitmap.width, 0],
-      [bottomLeft, 0, jimpImage.bitmap.height],
-      [bottomRight, jimpImage.bitmap.width, jimpImage.bitmap.height],
+      [topRight, imgWidth, 0],
+      [bottomLeft, 0, imgHeight],
+      [bottomRight, imgWidth, imgHeight],
     ].map(point => `${point[1]},${point[2]},${point[0].x},${point[0].y}`).join(' '));
     return await this.imBuffer(imImage);
   }

@@ -3,20 +3,20 @@ const Jimp = require('jimp');
 
 module.exports = class respects extends ImageCode {
   async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
-    avatar.resize(110, 110);
-
-    const bgImg = await this.jimpToIM(avatar);
-    bgImg.command('convert');
-    bgImg.out('-matte').out('-virtual-pixel').out('transparent');
-    bgImg.out('-distort').out('Perspective');
-    bgImg.out('110,0,66,0 0,110,13,104 110,110,73,100, 0,0,0,0');
-
-    const jBgImg = await this.imToJimp(bgImg);
+    const avatar = (await Jimp.read(msg.avatar)).resize(110, 110);
     const foreground = await Jimp.read(this.resource('respects.png'));
-    const img = new Jimp(950, 540, 0xffffffff);
-    img.composite(jBgImg, 366, 91).composite(foreground, 0, 0);
-
-    this.sendJimp(msg, img);
+    const canvas = await Jimp.read(await this.perspectify(avatar, {
+      topLeft: { x: 366, y: 91 },
+      topRight: { x: 432, y: 91 },
+      bottomLeft: { x: 378, y: 196 },
+      bottomRight: { x: 439, y: 191 },
+      canvas: {
+        width: foreground.bitmap.width,
+        height: foreground.bitmap.height,
+        color: 0xddddddff,
+      },
+    }));
+    canvas.composite(foreground, 0, 0);
+    this.sendJimp(msg, canvas);
   }
 };
