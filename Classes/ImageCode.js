@@ -148,6 +148,22 @@ module.exports = class ImageCode {
     });
   }
 
+  async perspectify(jimpImage, { topLeft, topRight, bottomLeft, bottomRight }) {
+    if(jimpImage.constructor.name !== 'Jimp')
+      jimpImage = await new Jimp(await this.toBuffer(jimpImage));
+
+    const imImage = im(await this.jimpBuffer(jimpImage));
+    imImage.command('convert');
+    imImage.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
+    imImage.out([
+      [topLeft, 0, 0],
+      [topRight, jimpImage.bitmap.width, 0],
+      [bottomLeft, 0, jimpImage.bitmap.height],
+      [bottomRight, jimpImage.bitmap.width, jimpImage.bitmap.height],
+    ].map(point => `${point[1]},${point[2]},${point[0].x},${point[0].y}`).join(' '));
+    return await this.imBuffer(imImage);
+  }
+
   webshotHTML(html, { width, height, css }) {
     return new Promise(resolve => {
       const stream = webshot(html, {
