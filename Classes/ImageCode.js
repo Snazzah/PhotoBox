@@ -53,9 +53,9 @@ module.exports = class ImageCode {
 
   // BUFFERS
 
-  jimpBuffer(img) {
+  jimpBuffer(img, mime = Jimp.MIME_PNG) {
     return new Promise((f, r) => {
-      img.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+      img.getBuffer(mime, (err, buffer) => {
         if (err) return r(err);
         f(buffer);
       });
