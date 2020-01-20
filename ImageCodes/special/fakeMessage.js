@@ -4,7 +4,7 @@ const sm = require('simple-markdown');
 const twemoji = require('twemoji');
 const fs = require('fs');
 const path = require('path');
-const emojiData = require('../assets/fakemessage/emojis');
+const emojiData = require('../../assets/fakemessage/emojis');
 const hljs = require('highlight.js');
 
 module.exports = class fakeMessage extends ImageCode {
