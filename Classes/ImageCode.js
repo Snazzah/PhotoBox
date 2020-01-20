@@ -109,6 +109,7 @@ module.exports = class ImageCode {
     image.out('-background').out('transparent');
     image.out('-fill').out(options.fill);
     image.out('-gravity').out(options.gravity);
+    if (options.pointSize) image.out('-pointsize').out(options.pointSize);
     if (options.stroke) {
       image.out('-stroke').out(options.stroke);
       if (options.strokewidth) image.out('-strokewidth').out(options.strokewidth);
@@ -120,6 +121,7 @@ module.exports = class ImageCode {
       image.out('-background').out('transparent');
       image.out('-fill').out(options.fill);
       image.out('-gravity').out(options.gravity);
+      if (options.pointSize) image.out('-pointsize').out(options.pointSize);
       image.out('-stroke').out('none');
       image.out(`caption:${options.text}`);
       image.out('-composite');

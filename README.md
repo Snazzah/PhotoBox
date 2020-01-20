@@ -41,8 +41,9 @@ Make sure to copy and paste `config/_default.json` into `config/default.json` an
 
 ### Sources
 - [Blargbot](https://github.com/Ratismal/blargbot) by Ratismal/stupid cat
-- [Dank Memer](https://github.com/Dank-Memer) by Melmsie
+- [Dank Memer](https://github.com/DankMemer) by Melmsie
 - [Korra](https://github.com/weeb-services/korra) by weeb-services
+- [Switchblade](https://github.com/SwitchbladeBot/switchblade) by Doges
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSnazzah%2FPhotoBox?ref=badge_large)
