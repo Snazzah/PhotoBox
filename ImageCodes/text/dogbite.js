@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 
 module.exports = class dogbite extends ImageCode {
   async process(msg) {
@@ -11,7 +10,7 @@ module.exports = class dogbite extends ImageCode {
       gravity: 'North',
     }));
 
-    const canvas = await Jimp.read(path.join(__dirname, '..', 'assets', 'dogbite.png'));
+    const canvas = await Jimp.read(this.resource('dogbite.png'));
     canvas.composite(bodytext, 19, 256);
 
     this.sendJimp(msg, canvas);

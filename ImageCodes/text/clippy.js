@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 
 module.exports = class clippy extends ImageCode {
   async process(msg) {
@@ -11,7 +10,7 @@ module.exports = class clippy extends ImageCode {
       gravity: 'North',
     }));
 
-    const img = await Jimp.read(path.join(__dirname, '..', 'assets', 'clippy.png'));
+    const img = await Jimp.read(this.resource('clippy.png'));
     img.composite(text, 28, 36);
 
     this.sendJimp(msg, img);

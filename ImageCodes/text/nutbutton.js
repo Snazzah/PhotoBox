@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 
 module.exports = class nutbutton extends ImageCode {
   async process(msg) {
@@ -17,7 +16,7 @@ module.exports = class nutbutton extends ImageCode {
     t3.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     t3.out('28,0,42,7 298,0,254,15 28,215,0,221 298,215,327,188');
     const t4 = await this.imToJimp(t3);
-    const img = await Jimp.read(path.join(__dirname, '..', 'assets', 'nutbutton.png'));
+    const img = await Jimp.read(this.resource('nutbutton.png'));
     img.composite(t4, 1, 200);
 
     this.sendJimp(msg, img);

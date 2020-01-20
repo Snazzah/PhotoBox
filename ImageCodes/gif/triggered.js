@@ -1,12 +1,11 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 
 module.exports = class triggered extends ImageCode {
   async process(msg) {
     const avatar = await Jimp.read(msg.avatar);
     avatar.resize(320, 320);
-    const triggeredOverlay = await Jimp.read(path.join(__dirname, '..', 'assets', 'triggered.png'));
+    const triggeredOverlay = await Jimp.read(this.resource('triggered.png'));
     triggeredOverlay.resize(280, 60);
     const overlay = new Jimp(256, 256, 0xff0000ff);
     overlay.opacity(0.4);

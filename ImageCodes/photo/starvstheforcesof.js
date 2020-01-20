@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const colorThief = require('color-thief-jimp');
 
 module.exports = class starvstheforcesof extends ImageCode {
@@ -20,7 +19,7 @@ module.exports = class starvstheforcesof extends ImageCode {
 
     const jBgImg = await this.imToJimp(bgImg);
     jBgImg.resize(734, 828);
-    const foreground = await Jimp.read(path.join(__dirname, '..', 'assets', 'starvstheforcesof.png'));
+    const foreground = await Jimp.read(this.resource('starvstheforcesof.png'));
     foreground.resize(960, 540);
 
     const actions = [];

@@ -23,6 +23,10 @@ module.exports = class ImageCode {
     return this.rInt(0, 1) === 1;
   }
 
+  resource(...file) {
+    return path.join(__dirname, '..', 'assets', ...file);
+  }
+
   // SENDING
 
   sendJimp(msg, img) {

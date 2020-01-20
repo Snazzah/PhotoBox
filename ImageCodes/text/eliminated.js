@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class eliminated extends ImageCode {
@@ -11,23 +10,23 @@ module.exports = class eliminated extends ImageCode {
 
   async process(msg) {
     if(msg.text.length > 32) msg.text = msg.text.substr(0, 32) + '...';
-    const fire = await Jimp.read(path.join(__dirname, '..', 'assets', 'eliminatedFire.png'));
+    const fire = await Jimp.read(this.resource('eliminatedFire.png'));
     const img = im(864, 1000).command('convert');
-    img.font(path.join(__dirname, '..', 'assets', 'fonts', 'bignoodletoo.ttf'), 70);
+    img.font(this.resource('fonts', 'bignoodletoo.ttf'), 70);
     img.out('-fill').out('#ff1a1a');
     img.out('-background').out('transparent');
     img.out('-gravity').out('north');
     img.out(`caption:${msg.text}`);
 
     const img2 = im(864, 1000).command('convert');
-    img2.font(path.join(__dirname, '..', 'assets', 'fonts', 'bignoodletoo.ttf'), 70);
+    img2.font(this.resource('fonts', 'bignoodletoo.ttf'), 70);
     img2.out('-fill').out('#ffffff');
     img2.out('-background').out('transparent');
     img2.out('-gravity').out('north');
     img2.out('caption:eliminated');
 
     const img3 = im(864, 1000).command('convert');
-    img3.font(path.join(__dirname, '..', 'assets', 'fonts', 'bignoodletoo.ttf'), 70);
+    img3.font(this.resource('fonts', 'bignoodletoo.ttf'), 70);
     img3.out('-fill').out('#ffffff');
     img3.out('-background').out('transparent');
     img3.out('-gravity').out('north');

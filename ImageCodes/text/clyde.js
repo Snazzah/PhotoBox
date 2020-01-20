@@ -1,12 +1,11 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class clyde extends ImageCode {
   async process(msg) {
     const img = im(864 - 150, 1000).command('convert');
-    img.font(path.join(__dirname, '..', 'assets', 'fonts', 'whitney.ttf'), 20);
+    img.font(this.resource('fonts', 'whitney.ttf'), 20);
     img.out('-fill').out('#ffffff');
     img.out('-background').out('transparent');
     img.out('-gravity').out('west');
@@ -14,7 +13,7 @@ module.exports = class clyde extends ImageCode {
 
     const date = new Date();
     const timestamp = im(1000, 30).command('convert');
-    timestamp.font(path.join(__dirname, '..', 'assets', 'fonts', 'whitney.ttf'), 12);
+    timestamp.font(this.resource('fonts', 'whitney.ttf'), 12);
     timestamp.out('-fill').out('#ffffff');
     timestamp.out('-background').out('transparent');
     timestamp.out('-gravity').out('southwest');
@@ -28,8 +27,8 @@ module.exports = class clyde extends ImageCode {
     const height = 165 + text.bitmap.height;
     const canvas = new Jimp(864, height, 0x33363bff);
 
-    const top = await Jimp.read(path.join(__dirname, '..', 'assets', 'clydeTop.png'));
-    const bottom = await Jimp.read(path.join(__dirname, '..', 'assets', 'clydeBottom.png'));
+    const top = await Jimp.read(this.resource('clydeTop.png'));
+    const bottom = await Jimp.read(this.resource('clydeBottom.png'));
     canvas.composite(top, 0, 0).composite(text, 118, 83);
     canvas.composite(timestampText.opacity(0.2), 225, 40);
     canvas.composite(bottom, 0, height - bottom.bitmap.height);

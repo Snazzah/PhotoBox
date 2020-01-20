@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class okbyemom extends ImageCode {
@@ -17,7 +16,7 @@ module.exports = class okbyemom extends ImageCode {
     t4.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     t4.out('0,0,6,113 290,0,275,0 0,31,18,141 290,31,288,29');
     const t5 = await this.imToJimp(t4);
-    const img = await Jimp.read(path.join(__dirname, '..', 'assets', 'okbyemom.png'));
+    const img = await Jimp.read(this.resource('okbyemom.png'));
     img.composite(t5, 314, 435);
 
     this.sendJimp(msg, img);

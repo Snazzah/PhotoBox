@@ -3,7 +3,6 @@ const Jimp = require('jimp');
 const sm = require('simple-markdown');
 const twemoji = require('twemoji');
 const fs = require('fs');
-const path = require('path');
 const emojiData = require('../../assets/fakemessage/emojis');
 const hljs = require('highlight.js');
 
@@ -159,7 +158,7 @@ module.exports = class fakeMessage extends ImageCode {
   }
 
   loadFile(file) {
-    return fs.readFileSync(path.join(__dirname, '..', 'assets', 'fakemessage', file), { encoding: 'utf8' });
+    return fs.readFileSync(this.resource('fakemessage', file), { encoding: 'utf8' });
   }
 
   htmlReplace(text) {

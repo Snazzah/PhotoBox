@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class waifu extends ImageCode {
@@ -14,7 +13,7 @@ module.exports = class waifu extends ImageCode {
     imavatar.out('0,0,54,0 155,0,155,24 0,173,0,143 155,173,102,173');
 
     const jBgImg = await this.imToJimp(imavatar);
-    const foreground = await Jimp.read(path.join(__dirname, '..', 'assets', 'waifu.png'));
+    const foreground = await Jimp.read(this.resource('waifu.png'));
     const img = new Jimp(450, 344, 0xffffffff);
     img.composite(jBgImg, 97, 178).composite(foreground, 0, 0);
 

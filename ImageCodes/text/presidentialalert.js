@@ -1,6 +1,5 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 
 module.exports = class presidentialalert extends ImageCode {
   async process(msg) {
@@ -12,7 +11,7 @@ module.exports = class presidentialalert extends ImageCode {
       gravity: 'Northwest',
     }));
 
-    const canvas = await Jimp.read(path.join(__dirname, '..', 'assets', 'presidential_alert.jpg'));
+    const canvas = await Jimp.read(this.resource('presidential_alert.jpg'));
     canvas.composite(bodytext, 60, 830);
 
     this.sendJimp(msg, canvas);

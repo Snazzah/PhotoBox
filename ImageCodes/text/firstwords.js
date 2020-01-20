@@ -1,12 +1,11 @@
 const { ImageCode } = require('photobox');
 const Jimp = require('jimp');
-const path = require('path');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class firstwords extends ImageCode {
   async process(msg) {
     const top = im(440, 77).command('convert');
-    top.font(path.join(__dirname, '..', 'assets', 'fonts', 'comic.ttf'), 55);
+    top.font(this.resource('fonts', 'comic.ttf'), 55);
     top.out('-fill').out('#000000');
     top.out('-background').out('transparent');
     top.out('-gravity').out('center');
@@ -19,7 +18,7 @@ module.exports = class firstwords extends ImageCode {
       gravity: 'Southwest',
     }));
     const toptext = await this.imToJimp(top);
-    const canvas = await Jimp.read(path.join(__dirname, '..', 'assets', 'firstwords.png'));
+    const canvas = await Jimp.read(this.resource('firstwords.png'));
     canvas.composite(bodytext, 30, 570).composite(toptext, 30, 38);
 
     this.sendJimp(msg, canvas);
