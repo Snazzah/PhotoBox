@@ -16,7 +16,7 @@ module.exports = class Ping extends Command {
     m.edit({ embed: {
       color: 0xf7b300,
       title: '📸 Pong!',
-      description: `WS: ${time} ms\nREST: ${this.client.ws.ping} ms`,
+      description: `WS: ${this.client.ws.ping} ms\nREST: ${time} ms`,
     } });
   }
 
