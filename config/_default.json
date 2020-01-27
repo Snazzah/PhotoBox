@@ -18,7 +18,8 @@
   },
   "options": {
     "lookBackLimit": 25,
-    "requestTimeout": 10000
+    "requestTimeout": 10000,
+    "svgSize": 1024
   },
   "debug": false,
   "botlist": {},

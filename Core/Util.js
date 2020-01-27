@@ -4,6 +4,7 @@ const emojiData = require('../assets/fakemessage/emojis.json');
 const twemoji = require('twemoji');
 const fetch = require('node-fetch');
 const FileType = require('file-type');
+const isSVG = require('is-svg');
 const AbortController = require('abort-controller');
 
 exports.Prefix = {
@@ -40,6 +41,7 @@ exports.Media = {
     'bmp',
     'gif',
     'jpg',
+    'svg',
   ],
   RESPONSE_CODES: {
     OK: 0,
@@ -117,7 +119,7 @@ exports.Media = {
         .sort((a, b) => a.length - b.length).reverse();
       if(emojiMatches.length)
         return {
-          url: ''.concat(twemoji.base, twemoji.size, '/', twemoji.convert.toCodePoint(emojiMatches[0].emoji), twemoji.ext),
+          url: ''.concat(twemoji.base, 'svg', '/', twemoji.convert.toCodePoint(emojiMatches[0].emoji), '.svg'),
           from: 'emoji',
         };
     }
@@ -138,7 +140,7 @@ exports.Media = {
 
     return !usePast ? false : message.author.displayAvatarURL({ size: 1024, format: 'png' });
   },
-  async validate(url) {
+  async validate(url, client) {
     // Make an AbortController to cut off any hanging requests
     const controller = new AbortController();
     const timeout = setTimeout(controller.abort.bind(controller), config.get('options.requestTimeout'));
@@ -160,6 +162,17 @@ exports.Media = {
     // Get buffer and check type
     const buffer = await response.buffer();
     const fileType = await FileType.fromBuffer(buffer);
+
+    // Special Case: SVG
+    if(isSVG(buffer.toString('utf8'))) {
+      client.logger.debug('Converting SVG to PNG', url);
+      const pngBuffer = client.IP.sendMessage({ id: exports.Random.id() }, {
+        code: 'svgToPNG',
+        svg: buffer.toString('utf8'),
+      });
+      return { buffer: pngBuffer, code: exports.Media.RESPONSE_CODES.OK };
+    }
+
     if(!exports.Media.SUPPORTED_FORMATS.includes(fileType.mime))
       return { code: exports.Media.RESPONSE_CODES.INVALID_MIME };
 
@@ -168,7 +181,7 @@ exports.Media = {
   async getContent(message, context) {
     const media = await exports.Media.find(message, context);
     let bufferOrURL = media.url;
-    const validation = await exports.Media.validate(media.url);
+    const validation = await exports.Media.validate(media.url, message.client);
     if(validation.buffer)
       bufferOrURL = validation.buffer;
     else if(validation.code !== exports.Media.RESPONSE_CODES.OK && media.past)
@@ -184,6 +197,9 @@ exports.Media = {
 exports.Random = {
   int(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+  id() {
+    return Math.random().toString(36).substring(2, 15);
   },
 };
 
