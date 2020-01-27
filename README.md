@@ -33,7 +33,8 @@ Make sure to copy and paste `config/_default.json` into `config/default.json` an
 | discord | object | The [options](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for the Discord Client. |
 | debug | bool | Whether or not to use verbose logs |
 | botlist | object | Bot list tokens supported by [dbots.js](https://github.com/Snazzah/dbots.js) |
-| api | object | api keys for certain commands |
+| options.lookBackLimit | number | How far PhotoBox should look back for a photo |
+| options.requestTimeout | number | How long a request should take until it is dropped |
 | api.weebsh | string | Wolke token for Weeb.sh |
 | api.giphy | string | API key for Giphy |
 | commands | string | The path to the folder where all the commands will be. |
