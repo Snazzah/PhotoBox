@@ -19,6 +19,10 @@ module.exports = class EventHandler {
       const args = Util.Prefix.strip(message).split(' ');
       const cname = args.splice(0, 1)[0];
       const command = this.client.cmds.get(cname);
+      const prefixUsed = {
+        raw: message.content.match(Util.Prefix.regex(this.client))[1],
+        clean: message.content.match(new RegExp(`^<@!?${this.client.user.id}>`)) ? `@${this.client.user.username} ` : message.content.match(Util.Prefix.regex(this.client))[1],
+      };
       if(!command) return;
       if(message.content.match(new RegExp(`^<@!?${this.client.user.id}>`)) &&
           !message.content.replace(new RegExp(`^<@!?${this.client.user.id}>`), '').match(new RegExp(`<@!?${this.client.user.id}>`)))
@@ -32,7 +36,7 @@ module.exports = class EventHandler {
         this.client.stats.bumpStat('commands');
         this.client.stats.bumpCommandStat(command.name);
         try {
-          await command.exec(message, args);
+          await command.exec(message, args, { prefixUsed });
           message.channel.stopTyping(true);
         } catch (e) {
           Util.sendError(message, e);

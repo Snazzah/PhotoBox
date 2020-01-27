@@ -55,7 +55,7 @@ module.exports = class PhotoBox extends Discord.Client {
     this.db.connect(config.get('redis'));
     await this.login();
     this.IP = new ImageProcess(config.get('debug'));
-    this.user.setActivity(`my memory skyrocket | ${config.get('prefix')}help`, { type: 3 });
+    this.user.setActivity(`my memory skyrocket | ${config.get('prefixes')[0]}help`, { type: 3 });
     this.stats = new StatTracker(this);
     this.cmds = new CommandLoader(this, path.join(this.dir, config.get('commands')), config.get('debug'));
     this.cmds.reload();

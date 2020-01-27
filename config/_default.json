@@ -1,6 +1,6 @@
 {
   "discordToken": "",
-  "prefix": "📷",
+  "prefixes": ["📷"],
   "owner": "123456789012345678",
   "color": 10144973,
   "redis": {

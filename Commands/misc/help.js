@@ -6,16 +6,17 @@ module.exports = class Help extends Command {
   get aliases() { return ['❓', '❔']; }
   get cooldown() { return 0; }
 
-  exec(message, args) {
-    const prefix = config.get('prefix');
+  exec(message, args, { prefixUsed }) {
+    const prefix = prefixUsed.clean,
+      prefixRaw = prefixUsed.raw;
     if(args[0]) {
       const command = this.client.cmds.get(args[0]);
       if(!command) message.reply(`The command ${args[0]} was not found.`); else {
         const embed = {
-          title: `${prefix}${command.name}`,
+          title: `${prefixRaw}${command.name}`,
           color: config.get('color'),
           fields: [
-            { name: 'Usage', value: `${prefix}${command.name}${command.helpMeta.usage ? ` \`${command.helpMeta.usage}\`` : ''}` },
+            { name: 'Usage', value: `${prefixRaw}${command.name}${command.helpMeta.usage ? ` \`${command.helpMeta.usage}\`` : ''}` },
             { name: 'Cooldown', value: `${command.cooldown} second${command.cooldown === 1 ? '' : 's'}`, inline: true },
           ],
           description: command.helpMeta.description,
@@ -36,19 +37,23 @@ module.exports = class Help extends Command {
         message.channel.send('', { embed });
       }
     } else {
+      const prefixes = [
+        ...config.get('prefixes').map(p => `\`${p}\``),
+        this.client.user.toString(),
+        this.client.user.username,
+      ];
       const embed = {
         color: config.get('color'),
-        description: '[PhotoBox](https://github.com/Snazzah/PhotoBox) By Snazzah',
-        footer: {
-          text: `\`${prefix}help [command]\` for more info`,
-        },
+        description: '**[PhotoBox](https://github.com/Snazzah/PhotoBox)** By Snazzah\n\n' +
+          `**Prefixes:** ${prefixes.join(', ')}\n` +
+          `\`${prefix}help [command]\` for more info`,
         fields: [],
       };
 
       const helpobj = {};
       this.client.cmds.commands.forEach((v, k) => {
         if(!v.listed && !this.client.owner(message)) return;
-        const string = `${prefix}${k}`;
+        const string = k;
         if(helpobj[v.helpMeta.category]) helpobj[v.helpMeta.category].push(string);
         else helpobj[v.helpMeta.category] = [string];
       });

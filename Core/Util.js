@@ -9,16 +9,16 @@ const AbortController = require('abort-controller');
 
 exports.Prefix = {
   regex(client) {
-    return new RegExp(`^(?:<@!?${client.user.id}>|${config.get('prefix')}|@?${client.user.username})\\s?(\\n|.)`, 'i');
+    return new RegExp(`^((?:<@!?${client.user.id}>|${config.get('prefixes').map(exports.Escape.regex).join('|')}|@?${client.user.username})\\s?)(\\n|.)`, 'i');
   },
   strip(message, cleanNewLines = true) {
-    let result = message.content.replace(exports.Prefix.regex(message.client), '$1');
-    if(cleanNewLines) result = result.replace(/ +/g, ' ');
+    let result = message.content.replace(exports.Prefix.regex(message.client), '$2');
+    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
     return result.trim();
   },
   stripClean(message, cleanNewLines = true) {
-    let result = message.cleanContent.replace(exports.Prefix.regex(message.client), '$1');
-    if(cleanNewLines) result = result.replace(/ +/g, ' ');
+    let result = message.cleanContent.replace(exports.Prefix.regex(message.client), '$2');
+    if(cleanNewLines) result = result.replace(/\s\s+/g, ' ');
     return result.trim();
   },
 };
@@ -194,6 +194,13 @@ exports.Media = {
   },
 };
 
+exports.Escape = {
+  regex(s) {
+    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  },
+};
+
+
 exports.Random = {
   int(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -213,27 +220,6 @@ exports.sendError = function(message, e) {
   if(e.toString().startsWith('Error: Request timed out')) return message.reply('Request timed out! The picture didn\'t load in ' + (parseInt(e.toString().slice(26).replace('ms', '')) / 1000) + ' seconds.');
   if(e.toString().startsWith('Error: IPCustomError: ')) return message.reply(e.toString().slice(22));
   message.reply('An error occurred! Please report this to the official server! ```js\n' + e.stack + '```');
-};
-
-exports.parseURL = (message, cont) => {
-  let url = null;
-  if(!cont) cont = '';
-  if (cont.startsWith('<') && cont.endsWith('>')) {
-    cont = cont.substring(1, cont.length - 1);
-  }
-  if(message.attachments.array().length > 0) {
-    url = message.attachments.array()[0].url;
-  }
-  if(!url) {
-    if(cont === '--avatar' || cont === '-a') url = message.author.displayAvatarURL({ size: 1024, format: 'png' });
-    if(message.mentions.users.first()) url = message.mentions.users.first().displayAvatarURL({ size: 1024, format: 'png' });
-    if(!url) {
-      const match = cont.match(/(http|https):\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/);
-      if(match) url = cont;
-    }
-  }
-  if(!url) url = message.author.displayAvatarURL({ size: 1024, format: 'png' });
-  return url;
 };
 
 exports.Logger = {

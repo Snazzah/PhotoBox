@@ -27,7 +27,7 @@ Make sure to copy and paste `config/_default.json` into `config/default.json` an
 | Property | Type | Description |
 | -------- | ---- | ----------- |
 | discordToken | string | The token to the bot, duh. |
-| prefix | string | The prefix that the bot will use. |
+| prefixes | array[string] | The prefixes that the bot will use. |
 | owner | string | The Discord ID of the person hosting the bot, AKA you. |
 | redis | object | The Redis Authorization Information needed for cooldowns. |
 | discord | object | The [options](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for the Discord Client. |
