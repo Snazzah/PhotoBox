@@ -7,7 +7,7 @@ module.exports = class durv extends ImageCode {
     avatar.cover(157, 226);
 
     const foreground = await Jimp.read(this.resource('durv.png'));
-    const canvas = new Jimp(401, 226);
+    const canvas = new Jimp(401, 226, 0x000000ff);
     canvas.composite(avatar, 4, 0).composite(foreground, 0, 0);
 
     this.sendJimp(msg, canvas);

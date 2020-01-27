@@ -15,7 +15,7 @@ module.exports = class clint extends ImageCode {
     const jBgImg = await this.imToJimp(bgImg);
     const foreground = await Jimp.read(this.resource('clint.png'));
 
-    const img = new Jimp(1200, 675);
+    const img = new Jimp(1200, 675, 0x000000ff);
     img.composite(jBgImg, 782, 0).composite(foreground, 0, 0);
 
     this.sendJimp(msg, img);
