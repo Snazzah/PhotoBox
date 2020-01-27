@@ -24,5 +24,40 @@
   "botlist": {},
   "api": {},
   "commands": "./Commands",
-  "image_codes": "./ImageCodes"
+  "image_codes": "./ImageCodes",
+  "log": {
+    "type": "default",
+    "colorType": "ansi256",
+    "powerline": {
+      "start": "",
+      "end": "",
+      "sameSep": "\uE0B1",
+      "diffSep": "\uE0B0",
+      "icons": {
+        "use": true,
+        "time": "\uF017",
+        "uptime": "\uFA1A",
+        "prefix_img": "\uF03E"
+      }
+    },
+    "colors": {
+      "bot": { "bg": 116, "fg": 0 },
+      "timestamp": { "bg": 15, "fg": 0 },
+      "uptime": { "bg": 3, "fg": 0 },
+      "message": { "bg": null, "fg": 15 },
+      "extra": { "bg": null, "fg": 245 },
+
+      "level_error": { "bg": 160, "fg": 15 },
+      "level_warn": { "bg": 220, "fg": 0 },
+      "level_info": { "bg": 111, "fg": 0 },
+      "level_debug": { "bg": 128, "fg": 0 },
+
+      "prefix_discord": { "bg": 63, "fg": 15 },
+      "prefix_redis": { "bg": 196, "fg": 15 },
+      "prefix_eventhandler": { "bg": 2, "fg": 15 },
+      "prefix_commandloader": { "bg": 58, "fg": 15 },
+      "prefix_poster": { "bg": 208, "fg": 15 },
+      "prefix_img": { "bg": 116, "fg": 0 }
+    }
+  }
 }

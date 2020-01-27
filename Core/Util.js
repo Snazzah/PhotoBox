@@ -1,4 +1,5 @@
 const config = require('config');
+const chalk = require('chalk');
 const emojiData = require('../assets/fakemessage/emojis.json');
 const twemoji = require('twemoji');
 const fetch = require('node-fetch');
@@ -217,4 +218,56 @@ exports.parseURL = (message, cont) => {
   }
   if(!url) url = message.author.displayAvatarURL({ size: 1024, format: 'png' });
   return url;
+};
+
+exports.Logger = {
+  fCap(text) {
+    return text.replace(/^(\w)/, (_, c) => c.toUpperCase());
+  },
+  addBrackets(text) {
+    return text ? `[${text}] ` : '';
+  },
+  chalkFromConfig({ bg, fg }, removeBG = false) {
+    let result = chalk;
+    const colorType = ['ansi256', 'ansi', 'hex', 'keyword'].includes(config.get('log.colorType')) ?
+      config.get('log.colorType') :
+      'hex';
+    if(![undefined, null].includes(bg) && !removeBG) result = result['bg' + exports.Logger.fCap(colorType)](bg);
+    if(![undefined, null].includes(fg)) result = result[colorType](fg);
+    return result;
+  },
+  buildPowerline(entries, { start = '', end = '', sameSep = '', diffSep = '' } = {}) {
+    let result = '';
+    entries.filter(entry => !!entry.text).forEach((entry, i, currentEntries) => {
+      const nextEntry = currentEntries[i + 1];
+      if(i === 0 && start) result += exports.Logger.chalkFromConfig(entry, true)(start);
+      result += exports.Logger.chalkFromConfig(entry)(entry.dontSpaceOut ? entry.text : ` ${entry.text} `);
+      if(nextEntry && !nextEntry.dontSeperate) {
+        if(nextEntry.bg === entry.bg) result += exports.Logger.chalkFromConfig(entry)(sameSep);
+        else {
+          const colorConfig = {
+            fg: ![undefined, null].includes(entry.bg) ? entry.bg : 0,
+            bg: nextEntry.bg,
+          };
+          result += exports.Logger.chalkFromConfig(colorConfig)(diffSep);
+        }
+      } else if(end) result += exports.Logger.chalkFromConfig(entry, true)(end);
+    });
+    return result;
+  },
+  getIcon(icon, append = '') {
+    return config.get('log.powerline.icons.use') && config.has(`log.powerline.icons.${icon}`) ?
+      config.get(`log.powerline.icons.${icon}`) + append :
+      '';
+  },
+  toHHMMSS(totalSeconds) {
+    let hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
+    minutes = String(minutes).padStart(2, '0');
+    hours = String(hours).padStart(2, '0');
+    seconds = String(seconds).padStart(2, '0');
+    return hours + ':' + minutes + ':' + seconds;
+  },
 };

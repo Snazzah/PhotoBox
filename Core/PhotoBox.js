@@ -4,11 +4,16 @@ const dbots = require('dbots');
 const path = require('path');
 require('./Extend');
 
+process.env.LOGGER_DEBUG = config.get('debug') ? 'true' : '';
 const Database = require('./Database');
 const EventHandler = require('./EventHandler');
 const CommandLoader = require('./CommandLoader');
 const StatTracker = require('./StatTracker');
 const ImageProcess = require('./ImageProcess');
+
+const logger = require('./Logger')();
+const posterLogger = require('./Logger')('POSTER');
+const discordLogger = require('./Logger')('DISCORD');
 
 module.exports = class PhotoBox extends Discord.Client {
   constructor({ packagePath, mainDir } = {}) {
@@ -20,28 +25,29 @@ module.exports = class PhotoBox extends Discord.Client {
     super(discordConfig);
     this.dir = mainDir;
     this.pkg = pkg;
+    this.logger = logger;
     this.awaitedMessages = {};
     this.pageProcesses = {};
-    this.on('ready', () => this.log('Logged in'));
-    this.on('warn', s => this.warn('WARN', s));
-    this.on('error', s => this.error('ERROR', s));
-    this.on('disconnected', () => this.log('Disconnected'));
-    this.on('reconnecting', () => this.warn('Reconnecting'));
-    this.on('resume', r => this.warn('Resumed. Replayed events:', r));
-    if(config.get('debug')) this.on('debug', s => this.debug(s));
+    this.on('ready', () => discordLogger.info('Logged in'));
+    this.on('warn', s => discordLogger.warn('WARN', s));
+    this.on('error', s => discordLogger.error('ERROR', s));
+    this.on('disconnected', () => discordLogger.log('Disconnected'));
+    this.on('reconnecting', () => discordLogger.warn('Reconnecting'));
+    this.on('resume', r => discordLogger.warn('Resumed. Replayed events:', r));
+    this.on('debug', s => discordLogger.debug(s));
 
     process.once('uncaughtException', err => {
-      this.error('Uncaught exception', err.stack);
+      logger.error('Uncaught exception', err.stack);
       setTimeout(() => this.dieGracefully().then(() => process.exit(0)), 2500);
     });
 
     process.once('SIGINT', async () => {
-      this.log('Caught SIGINT');
+      logger.info('Caught SIGINT');
       await this.dieGracefully();
       process.exit(0);
     });
 
-    this.log('Client initialized');
+    logger.info('Client initialized');
   }
 
   async start() {
@@ -53,9 +59,11 @@ module.exports = class PhotoBox extends Discord.Client {
     this.stats = new StatTracker(this);
     this.cmds = new CommandLoader(this, path.join(this.dir, config.get('commands')), config.get('debug'));
     this.cmds.reload();
-    this.cmds.preloadAll();
+    await this.cmds.preloadAll();
     this.eventHandler = new EventHandler(this);
     if(Object.keys(config.get('botlist')).length) this.initPoster();
+
+    logger.info('Client started');
   }
 
   initPoster() {
@@ -67,7 +75,11 @@ module.exports = class PhotoBox extends Discord.Client {
       voiceConnections: () => 0,
     });
 
-    this.poster.post();
+    this.poster.post().then(this.onPost).catch(this.onPostFail);
+    this.poster.addHandler('autopost', this.onPost);
+    this.poster.addHandler('autopostfail', this.onAutoPostFail);
+    this.poster.addHandler('post', this.onPostOne);
+    this.poster.addHandler('postfail', this.onPostFail);
     this.poster.startInterval();
   }
 
@@ -76,11 +88,11 @@ module.exports = class PhotoBox extends Discord.Client {
   }
 
   async dieGracefully() {
-    this.log('Slowly dying...');
+    logger.info('Slowly dying...');
     if(this.poster) this.poster.stopInterval();
     super.destroy();
     await this.db.disconnect();
-    this.log('It\'s all gone...');
+    logger.info('It\'s all gone...');
   }
 
   apiKey(name) {
@@ -88,26 +100,23 @@ module.exports = class PhotoBox extends Discord.Client {
     return config.get('api')[name];
   }
 
-  // LOGGING
+  // POSTER EVENTS
 
-  get logPrefix() {
-    return '[PHOTOBOX]';
+  onPost() {
+    posterLogger.info('Posted stats to all bot lists.');
   }
 
-  log(...a) {
-    return console.log(this.logPrefix, ...a);
+  onPostOne(result) {
+    posterLogger.info(`Posted to ${result.request.socket.servername}!`);
   }
 
-  warn(...a) {
-    return console.warn(this.logPrefix, ...a);
+  onPostFail(e) {
+    posterLogger.error(`Failed to post in ${e.request.socket.servername}! (${e.request.method}, ${e.response.status})`);
+    console.log(e.response.data);
   }
 
-  error(...a) {
-    return console.error(this.logPrefix, ...a);
-  }
-
-  debug(...a) {
-    return console.debug(this.logPrefix, ...a);
+  onAutoPostFail(e) {
+    posterLogger.warn(`Autopost failed at ${e.request.socket.servername}!`);
   }
 
   // CHECK PERMS

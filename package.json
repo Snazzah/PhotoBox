@@ -12,6 +12,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "abort-controller": "^3.0.0",
+    "chalk": "^3.0.0",
     "color-thief-jimp": "^2.0.2",
     "config": "^3.2.5",
     "dbots": "Snazzah/dbots.js#master",
@@ -30,7 +31,8 @@
     "text-table": "^0.2.0",
     "tinycolor2": "^1.4.1",
     "twemoji": "^2.3.0",
-    "webshot": "Snazzah/node-webshot#master"
+    "webshot": "Snazzah/node-webshot#master",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "eslint": "^6.5.1",

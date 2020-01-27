@@ -1,11 +1,13 @@
 const child_process = require('child_process');
-const config = require('config');
+const Logger = require('./Logger');
 
 module.exports = class ImageProcess {
   init() {
     const proc = child_process.fork('./image_process.js', { silent: true });
-    if(config.get('debug')) proc.on('disconnect', () => console.log(`[IMG ${proc.pid}]`, 'disconnected'));
-    proc.on('error', err => console.log(`[IMG ${proc.pid}]`, 'error:', err));
+    proc.logger = Logger(`IMG ${proc.pid}`, { prefixID: 'img' });
+    proc.initTime = Date.now();
+    proc.on('disconnect', () => proc.logger.debug('Disconnected'));
+    proc.on('error', err => proc.logger.error('Error', err));
     return proc;
   }
 
@@ -19,20 +21,20 @@ module.exports = class ImageProcess {
   wait(proc) {
     return new Promise((resolve, reject) => {
       proc.on('message', msg => {
-        if(msg.code === 'log') console.log(`[IMG ${proc.pid}]`, ...msg.log);
+        if(msg.code === 'log') proc.logger.info('Recieved log code', ...msg.log);
         if(msg.code === 'ok') {
-          if(config.get('debug')) console.log(`[IMG ${proc.pid}]`, 'loaded');
+          proc.logger.debug('Initialized');
           proc.stdout.on('data', data => {
-            console.log(`[IMG ${proc.pid} to MAIN]`, data.toString());
+            proc.logger.info(data.toString());
           });
         }
         if(msg.status === 'fail') {
-          console.log(`[IMG ${proc.pid}]`, 'file error:', msg.err);
+          proc.logger.error('File error:', msg.err);
           reject({ message: msg.message, stack: msg.err, msg, toString() { return msg.message; } });
         }
         if(msg.quit) {
           proc.kill();
-          if(config.get('debug')) console.log(`[IMG ${proc.pid}]`, `done "${msg.code}" in ${msg.uptime} seconds`);
+          proc.logger.debug(`Finished "${msg.code}" in ${(Date.now() - proc.initTime) / 1000} seconds`);
           resolve(msg);
         }
       });

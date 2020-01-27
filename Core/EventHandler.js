@@ -1,10 +1,12 @@
 const Util = require('./Util');
+const logger = require('./Logger')('EVENTHANDLER');
 
 module.exports = class EventHandler {
   constructor(client) {
     this.client = client;
     client.on('message', this.onMessage.bind(this));
     client.on('guildMemberAdd', this.onMemberJoin.bind(this));
+    logger.info('Initialized');
   }
 
   async onMessage(message) {

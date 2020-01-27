@@ -1,25 +1,27 @@
 const redis = require('redis');
 const config = require('config').get('redis');
 const { EventEmitter } = require('eventemitter3');
+const logger = require('./Logger')('REDIS');
 
 module.exports = class Database extends EventEmitter {
   constructor(client) {
     super();
     this.reconnectAfterClose = true;
     this.client = client;
-    this.client.log('[DB]', 'Initialized');
+    this.logger = logger;
+    logger.info('Initialized');
   }
 
   connect({ host = 'localhost', port, password } = config) {
     return new Promise((resolve, reject) => {
       this.redis = redis.createClient({ host, port, password });
-      this.client.log('[DB]', 'Connected');
+      logger.info('Connected');
       this.redis.on('error', this.onError.bind(this));
-      this.redis.on('warning', w => this.client.warn('[DB]', w));
+      this.redis.on('warning', w => logger.warn(w));
       this.redis.on('end', () => this.onClose.bind(this));
-      this.redis.on('reconnecting', () => this.client.log('[DB]', 'Reconnecting'));
-      this.redis.on('ready', () => this.client.log('[DB]', 'Ready'));
-      this.redis.on('connect', () => this.client.log('[DB]', 'Redis connection has started.'));
+      this.redis.on('reconnecting', () => logger.info('Reconnecting'));
+      this.redis.on('ready', () => logger.info('Ready'));
+      this.redis.on('connect', () => logger.info('Redis connection has started.'));
       this.host = host;
       this.port = port;
       this.password = password;
@@ -96,9 +98,9 @@ module.exports = class Database extends EventEmitter {
   }
 
   async reconnect() {
-    this.client.log('[DB]', 'Attempting reconnection');
+    logger.info('Attempting reconnection');
     this.conn = await this.connect(this);
-    this.client.log('[DB]', 'Reconnected');
+    logger.info('Reconnected');
   }
 
   disconnect() {
@@ -110,12 +112,12 @@ module.exports = class Database extends EventEmitter {
   }
 
   onError(err) {
-    this.client.log('[DB]', 'Error', err);
+    logger.error(err);
     this.emit('error', err);
   }
 
   async onClose() {
-    this.client.log('[DB]', 'Closed');
+    logger.info('Closed');
     this.emit('close');
     if(this.reconnectAfterClose) await this.reconnect();
   }

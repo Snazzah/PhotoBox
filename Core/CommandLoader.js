@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const logger = require('./Logger')('COMMANDLOADER');
 
 module.exports = class CommandLoader {
   constructor(client, cPath, debug) {
@@ -7,6 +8,7 @@ module.exports = class CommandLoader {
     this.path = path.resolve(cPath);
     this.debug = debug;
     this.client = client;
+    this.logger = logger;
   }
 
   iterateFolder(folderPath) {
@@ -30,7 +32,7 @@ module.exports = class CommandLoader {
   }
 
   load(commandPath) {
-    if(this.debug) this.client.log('Loading command', commandPath);
+    this.logger.debug('Loading command', commandPath);
     delete require.cache[require.resolve(commandPath)];
     const cls = require(commandPath);
     const cmd = new cls(this.client);
@@ -42,6 +44,7 @@ module.exports = class CommandLoader {
   reload() {
     this.commands.clear();
     this.iterateFolder(this.path);
+    logger.info(`Loaded ${this.commands.size} commands.`);
   }
 
   get(name) {
@@ -66,8 +69,9 @@ module.exports = class CommandLoader {
     this.get(name).preload();
   }
 
-  preloadAll() {
-    this.commands.forEach(c => c.preload());
+  async preloadAll() {
+    const preloadedCommands = await Promise.all(Array.from(this.commands.values()).map(c => c.preload()));
+    logger.info(`Pre-loaded ${preloadedCommands.filter(c => c !== true).length} commands.`);
   }
 
   async processCooldown(message, name) {
