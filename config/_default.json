@@ -16,6 +16,10 @@
     "bot": true,
     "disabledEvents": ["TYPING_START", "TYPING_STOP"]
   },
+  "options": {
+    "lookBackLimit": 25,
+    "requestTimeout": 10000
+  },
   "debug": false,
   "botlist": {},
   "api": {},

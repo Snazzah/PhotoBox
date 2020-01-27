@@ -12,25 +12,27 @@ module.exports = class PhotoCommand extends Command {
   }
 
   async exec(message, args) {
-    const url = Util.parseURL(message, args[0]);
-    if(url.toString().startsWith('Error: ')) return message.reply(url.toString());
-    if(url) {
+    try {
       message.channel.startTyping();
-      try {
-        const buffer = await this.sendToProcess(message, { code: this.code, avatar: url, url });
-        message.channel.send({
-          embed: {
-            color: config.get('color'),
-            image: { url: `attachment://${this.code}.${this.extension}` },
-            footer: { text: `${message.author.tag} (${message.author.id})` },
-          },
-          files: [{ attachment: buffer, name: `${this.code}.${this.extension}` }],
-        });
-      } catch (e) {
-        Util.sendError(message, e);
-      } finally {
-        message.channel.stopTyping();
-      }
+      const bufferOrURL = await Util.Media.getContent(message, args[0]);
+      if(!bufferOrURL) return;
+      const buffer = await this.sendToProcess(message, {
+        code: this.code,
+        avatar: bufferOrURL,
+        url: bufferOrURL,
+      });
+      message.channel.send({
+        embed: {
+          color: config.get('color'),
+          image: { url: `attachment://${this.code}.${this.extension}` },
+          footer: { text: `${message.author.tag} (${message.author.id})` },
+        },
+        files: [{ attachment: buffer, name: `${this.code}.${this.extension}` }],
+      });
+    } catch (e) {
+      Util.sendError(message, e);
+    } finally {
+      message.channel.stopTyping();
     }
   }
 

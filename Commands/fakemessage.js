@@ -8,7 +8,7 @@ module.exports = class FakeMessage extends Command {
   get cooldown() { return 3; }
 
   async exec(message, args) {
-    let text = Util.stripPrefix(message, false).split(' ').slice(1);
+    let text = Util.Prefix.strip(message, false).split(' ').slice(1);
     let user = message.author;
     if(!args[0])
       return message.channel.send('Provide text for this to work!');

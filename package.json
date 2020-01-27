@@ -11,11 +11,13 @@
   "author": "Snazzah <suggesttosnazzy@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "color-thief-jimp": "^2.0.2",
     "config": "^3.2.5",
     "dbots": "Snazzah/dbots.js#master",
     "discord.js": "hydrabolt/discord.js#master",
     "eventemitter3": "^2.0.3",
+    "file-type": "^13.1.2",
     "gif-encoder": "^0.6.1",
     "gm": "^1.23.0",
     "highlight.js": "^9.12.0",

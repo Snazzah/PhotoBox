@@ -9,7 +9,7 @@ module.exports = class Bunny extends Command {
   async exec(message) {
     message.channel.send({ embed: {
       color: config.get('color'),
-      image: { url: `https://bunnies.media/gif/${Util.rInt(1, 163)}.gif` },
+      image: { url: `https://bunnies.media/gif/${Util.Random.int(1, 163)}.gif` },
       footer: { text: `${message.author.tag} (${message.author.id})` },
     } });
   }

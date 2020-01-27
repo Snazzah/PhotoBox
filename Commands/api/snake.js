@@ -9,7 +9,7 @@ module.exports = class Snake extends Command {
   async exec(message) {
     message.channel.send({ embed: {
       color: config.get('color'),
-      image: { url: `http://fur.im/snek/i/${Util.rInt(1, 874)}.png` },
+      image: { url: `http://fur.im/snek/i/${Util.Random.int(1, 874)}.png` },
       footer: { text: `${message.author.tag} (${message.author.id})` },
     } });
   }

@@ -7,7 +7,7 @@ module.exports = class TTT extends Command {
   get cooldown() { return 3; }
 
   async exec(message, args) {
-    let text = Util.stripPrefixClean(message).split(' ').slice(1).join(' ');
+    let text = Util.Prefix.stripClean(message).split(' ').slice(1).join(' ');
     let user = message.author;
     if(args[0].match(/\[id=(\d+)\]/g)) {
       const id = args[0].replace(/\[id=(\d+)\]/g, '$1');

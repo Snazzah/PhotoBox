@@ -12,9 +12,9 @@ module.exports = class EventHandler {
     if(message.author.bot) return;
     if(message.channel.type !== 'dm' && !message.channel.permissionsFor(this.client.user).has('SEND_MESSAGES')) return;
 
-    if(!message.content.match(Util.prefixRegex(this.client))) return;
+    if(!message.content.match(Util.Prefix.regex(this.client))) return;
     try {
-      const args = Util.stripPrefix(message).split(' ');
+      const args = Util.Prefix.strip(message).split(' ');
       const cname = args.splice(0, 1)[0];
       const command = this.client.cmds.get(cname);
       if(!command) return;
@@ -31,6 +31,7 @@ module.exports = class EventHandler {
         this.client.stats.bumpCommandStat(command.name);
         try {
           await command.exec(message, args);
+          message.channel.stopTyping(true);
         } catch (e) {
           Util.sendError(message, e);
         }

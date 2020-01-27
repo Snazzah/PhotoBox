@@ -12,7 +12,7 @@ module.exports = class TextCommand extends Command {
   }
 
   async exec(message) {
-    let text = Util.stripPrefixClean(message).split(' ').slice(1).join(' ');
+    let text = Util.Prefix.stripClean(message).split(' ').slice(1).join(' ');
     if(!text) return message.channel.send('Provide text or a mention for this to work!');
     if(text.match(/^<#(\d{17,19})>$/g) && message.mentions.channels.first()) text = '#' + message.mentions.channels.first().name;
     if(text.match(/^<@&(\d{17,19})>$/g) && message.mentions.roles.first()) text = '@' + message.mentions.roles.first().name;
