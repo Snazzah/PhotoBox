@@ -3,7 +3,7 @@ const config = require('config');
 
 module.exports = class Help extends Command {
   get name() { return 'help'; }
-  get aliases() { return ['❓', '❔']; }
+  get aliases() { return ['❓', '❔', '?']; }
   get cooldown() { return 0; }
 
   exec(message, args, { prefixUsed }) {
