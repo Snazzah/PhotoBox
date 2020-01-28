@@ -15,7 +15,7 @@
     "chalk": "^3.0.0",
     "color-thief-jimp": "^2.0.2",
     "config": "^3.2.5",
-    "dbots": "Snazzah/dbots.js#master",
+    "dbots": "github:Snazzah/dbots.js",
     "discord.js": "hydrabolt/discord.js#master",
     "eventemitter3": "^2.0.3",
     "file-type": "^13.1.2",
