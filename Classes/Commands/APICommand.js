@@ -1,4 +1,4 @@
-const Command = require('./Command');
+const Command = require('../Command');
 const fetch = require('node-fetch');
 const config = require('config');
 

@@ -1,8 +1,8 @@
-const Command = require('./Command');
+const Command = require('../Command');
 const { Util } = require('photobox-core');
 const config = require('config');
 
-module.exports = class OneUserCommand extends Command {
+module.exports = class PhotoCommand extends Command {
   get extension() {
     return 'png';
   }
@@ -11,19 +11,15 @@ module.exports = class OneUserCommand extends Command {
     return this.name;
   }
 
-  get avatarSize() {
-    return 1024;
-  }
-
-  async exec(message) {
-    let user = message.author;
-    if(message.mentions.users.size >= 1) user = message.mentions.users.array()[0];
-    message.channel.startTyping();
+  async exec(message, args) {
     try {
+      message.channel.startTyping();
+      const bufferOrURL = await Util.Media.getContent(message, args[0]);
+      if(!bufferOrURL) return;
       const buffer = await this.sendToProcess(message, {
         code: this.code,
-        avatar: user.displayAvatarURL({ size: this.avatarSize, format: 'png' }),
-        username: user.username,
+        avatar: bufferOrURL,
+        url: bufferOrURL,
       });
       message.channel.send({
         embed: {

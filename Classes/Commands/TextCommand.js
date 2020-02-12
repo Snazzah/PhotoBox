@@ -1,4 +1,4 @@
-const Command = require('./Command');
+const Command = require('../Command');
 const { Util } = require('photobox-core');
 const config = require('config');
 
