@@ -7,4 +7,5 @@ module.exports = {
 
   Command: require('./Command'),
   ImageCode: require('./ImageCode'),
+  URLExtractor: require('./URLExtractor'),
 };

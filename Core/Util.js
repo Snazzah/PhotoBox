@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const FileType = require('file-type');
 const isSVG = require('is-svg');
 const AbortController = require('abort-controller');
+const URLExtractor = require('../Classes/URLExtractor');
 
 exports.Prefix = {
   regex(client) {
@@ -25,6 +26,7 @@ exports.Prefix = {
 
 exports.Regex = {
   url: /https?:\/\/(-\.)?([^\s/?.#-]+\.?)+(\/[^\s]*)?/gi,
+  urlMarkdown: /(?:(https?:\/\/(?:-\.)?(?:[^\s/?.#-]+\.?)+(?:\/[^\s]*)?)|<(https?:\/\/(?:-\.)?(?:[^\s/?.#-]+\.?)+(?:\/[^\s]*)?)>)/gi,
   customEmoji: /<(a?):[0-9a-zA-Z-_]+:(\d+)>/,
 };
 
@@ -34,6 +36,7 @@ exports.Media = {
     'image/jpeg',
     'image/bmp',
     'image/gif',
+    'image/svg+xml',
   ],
   FILE_EXTS: [
     'png',
@@ -74,15 +77,16 @@ exports.Media = {
 
     // URL detection in content
     if(exports.Regex.url.test(message.content)) {
-      const targetURL = message.content
-        .match(exports.Regex.url)
-        .filter(url => {
-          const ext = new URL(url).pathname.split('.').reverse()[0];
-          return exports.Media.FILE_EXTS.includes(ext);
-        })[0];
+      const urls = [];
+      message.content.replace(exports.Regex.urlMarkdown, (_, url, urlFromSymbols) => {
+        if(url || urlFromSymbols) urls.push(urlFromSymbols || url);
+      });
+      const targetURL = urls[0];
+      const convertedURL = await URLExtractor.parseURL(targetURL) || targetURL;
       if(targetURL) return {
-        url: targetURL,
+        url: convertedURL,
         from: 'url',
+        skipHead: convertedURL !== targetURL,
       };
     }
 
@@ -140,19 +144,34 @@ exports.Media = {
 
     return !usePast ? false : message.author.displayAvatarURL({ size: 1024, format: 'png' });
   },
-  async validate(url, client) {
+  async request(url, method = 'GET') {
     // Make an AbortController to cut off any hanging requests
     const controller = new AbortController();
     const timeout = setTimeout(controller.abort.bind(controller), config.get('options.requestTimeout'));
 
     // Make request
-    const response = await fetch(url, { signal: controller.signal })
-      .catch(error => {
-        if(error.name === 'AbortError')
-          return { error: true, code: exports.Media.RESPONSE_CODES.ABORTED };
-        else return { error: true, code: exports.Media.RESPONSE_CODES.INVALID_URL };
-      });
+    const response = await fetch(url, {
+      method,
+      signal: controller.signal,
+    }).catch(error => {
+      if(error.name === 'AbortError')
+        return { error: exports.Media.RESPONSE_CODES.ABORTED };
+      else return { error: exports.Media.RESPONSE_CODES.INVALID_URL };
+    });
     clearTimeout(timeout);
+    return response;
+  },
+  async validate(url, client, skipHead = false) {
+    if(!skipHead) {
+      // Check Content Type from HEAD request
+      const headResponse = await exports.Media.request(url, 'HEAD');
+      if(headResponse.error) return headResponse;
+
+      if(!exports.Media.SUPPORTED_FORMATS.includes(headResponse.headers.get('content-type')))
+        return { error: exports.Media.RESPONSE_CODES.INVALID_MIME };
+    }
+
+    const response = await exports.Media.request(url);
     if(response.error) return response;
 
     // Check status
@@ -173,7 +192,7 @@ exports.Media = {
       return { buffer: pngBuffer, code: exports.Media.RESPONSE_CODES.OK };
     }
 
-    if(!exports.Media.SUPPORTED_FORMATS.includes(fileType.mime))
+    if(!fileType || !exports.Media.SUPPORTED_FORMATS.includes(fileType.mime))
       return { code: exports.Media.RESPONSE_CODES.INVALID_MIME };
 
     return { buffer, code: exports.Media.RESPONSE_CODES.OK };
@@ -181,7 +200,7 @@ exports.Media = {
   async getContent(message, context) {
     const media = await exports.Media.find(message, context);
     let bufferOrURL = media.url;
-    const validation = await exports.Media.validate(media.url, message.client);
+    const validation = await exports.Media.validate(media.url, message.client, !!media.skipHead);
     if(validation.buffer)
       bufferOrURL = validation.buffer;
     else if(validation.code !== exports.Media.RESPONSE_CODES.OK && media.past)
