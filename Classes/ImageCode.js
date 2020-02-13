@@ -156,7 +156,7 @@ module.exports = class ImageCode {
     const imgWidth = jimpImage.bitmap.width;
     const imgHeight = jimpImage.bitmap.height;
     if(canvas) {
-      const jimpCanvas = new Jimp(canvas.width, canvas.height, canvas.color);
+      const jimpCanvas = new Jimp(canvas.width, canvas.height, canvas.color || 0xffffff00);
       jimpCanvas.composite(jimpImage, 0, 0);
       imageToPerspect = jimpCanvas;
     }
