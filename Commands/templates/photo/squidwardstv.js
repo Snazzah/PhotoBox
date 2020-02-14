@@ -6,7 +6,7 @@ module.exports = class SquidwardsTV extends PhotoCommand {
 
   get helpMeta() { return {
     category: 'Image Manipulation',
-    description: 'No wait! put that back on!',
+    description: 'No wait, Put that back on!',
     usage: '[url]',
     credit: {
       name: 'A Random Shitpost Bot 5000 Template',
