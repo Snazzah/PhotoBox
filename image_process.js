@@ -1,38 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('config');
-require('./Core/Extend');
-
-class FolderIterator {
-  constructor(ipath, cb) {
-    this.cb = cb;
-    this.path = path.resolve(ipath);
-  }
-
-  iterateFolder(folderPath) {
-    const files = fs.readdirSync(folderPath);
-    return Promise.all(files.map(async file => {
-      const filePath = path.join(folderPath, file);
-      const stat = fs.lstatSync(filePath);
-      if(stat.isSymbolicLink()) {
-        const realPath = fs.readlinkSync(filePath);
-        if(stat.isFile() && file.endsWith('.js')) {
-          await this.cb(realPath, this);
-        }else if(stat.isDirectory()) {
-          await this.iterateFolder(realPath);
-        }
-      }else if(stat.isFile() && file.endsWith('.js')) {
-        await this.cb(filePath, this);
-      }else if(stat.isDirectory()) {
-        await this.iterateFolder(filePath);
-      }
-    }));
-  }
-
-  iterate() {
-    return this.iterateFolder(this.path);
-  }
-}
 
 class ImageMaster {
   constructor() {
@@ -47,6 +15,30 @@ class ImageMaster {
     process.send({ code: 'ok' });
   }
 
+  findInFolder(folderPath, fileName) {
+    const files = fs.readdirSync(folderPath);
+    for (let i = 0, len = files.length; i < len; i++) {
+      const file = files[i];
+      const filePath = path.join(folderPath, file);
+      const stat = fs.lstatSync(filePath);
+      if(stat.isSymbolicLink()) {
+        const realPath = fs.readlinkSync(filePath);
+        if(stat.isFile() && file.endsWith('.js') && path.parse(realPath).base === fileName)
+          return realPath;
+        else if(stat.isDirectory()) {
+          const result = this.findInFolder(realPath, fileName);
+          if(result) return result;
+        }
+      } else if(stat.isFile() && file.endsWith('.js') && file === fileName)
+        return filePath;
+      else if(stat.isDirectory()) {
+        const result = this.findInFolder(filePath, fileName);
+        if(result) return result;
+      }
+    }
+    return null;
+  }
+
   async process(msg) {
     try {
       const resultMessage = msg;
@@ -54,16 +46,10 @@ class ImageMaster {
         if(msg[k] && msg[k].type === 'Buffer') resultMessage[k] = Buffer.from(msg[k].data);
       });
 
-      let code = null;
-      const iter = new FolderIterator(config.get('image_codes'), p => {
-        const cls = require(p);
-        if(cls.name != resultMessage.code) return;
-        code = new cls(this);
-      });
-      await iter.iterate();
+      const codePath = this.findInFolder(path.resolve(config.get('image_codes')), `${resultMessage.code}.js`);
+      if(!codePath) return this.sendError(resultMessage, new Error('Nonexistant code.'), 'master', true);
+      const code = new (require(codePath))();
       resultMessage.quit = true;
-
-      if(!code) return this.sendError(resultMessage, new Error('Nonexistant code.'), 'master', true);
 
       try {
         await code.process(resultMessage, this);
