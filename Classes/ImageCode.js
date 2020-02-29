@@ -45,10 +45,15 @@ module.exports = class ImageCode {
   }
 
   sendBuffer(msg, buf) {
-    msg.status = 'success';
-    msg.uptime = process.uptime();
-    msg.buffer = buf.toString('base64');
-    return process.send(msg);
+    return process.send({
+      id: msg.id,
+      code: msg.code,
+      quit: msg.quit,
+
+      status: 'success',
+      uptime: process.uptime(),
+      buffer: buf.toString('base64'),
+    });
   }
 
   async sendGIF(msg, width, height, frames, repeat, delay, trans) {

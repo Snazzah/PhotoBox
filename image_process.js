@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('config');
+global.ImageCode = require('./Classes/ImageCode');
 
 class ImageMaster {
   constructor() {

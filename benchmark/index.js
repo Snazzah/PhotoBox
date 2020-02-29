@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('config');
 const Util = require('./util');
+global.ImageCode = require('../Classes/ImageCode');
 
 const { ImageProcess } = require('photobox-core');
 const IP = new ImageProcess();
