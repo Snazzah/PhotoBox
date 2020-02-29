@@ -17,7 +17,7 @@ const BenchmarkConstants = {
 };
 
 const imageCodesPaths = Util.flatten(Util.iterateFolder(path.resolve(config.get('image_codes'))));
-const imageCodes = imageCodesPaths.map(codePath => {
+let imageCodes = imageCodesPaths.map(codePath => {
   const imageCode = require(codePath);
   return {
     path: codePath,
@@ -26,10 +26,14 @@ const imageCodes = imageCodesPaths.map(codePath => {
   };
 });
 
+if(process.argv.slice(2).length)
+  imageCodes = imageCodes.filter(code => process.argv.includes(code.code));
+
 const counters = {
   passed: 0,
   skipped: 0,
   failed: 0,
+  times: [],
 };
 
 const startTime = Date.now();
@@ -54,12 +58,17 @@ console.log('');
         ...imageCode.message,
       });
       counters.passed++;
-      console.log(`- ${imageCode.code}: ${Date.now() - codeStartTime} ms`);
+      const time = Date.now() - codeStartTime;
+      counters.times.push(time);
+      console.log(`- ${imageCode.code}: ${time} ms`);
     } catch (e) {
       counters.failed++;
-      console.log(`! ${imageCode.code}: ${Date.now() - codeStartTime} ms`);
+      const time = Date.now() - codeStartTime;
+      counters.times.push(time);
+      console.log(`! ${imageCode.code}: ${time} ms`);
     }
   }
 
-  console.log(`\n- ${counters.failed ? '(!) ' : ''}took ${Date.now() - startTime} ms, ${counters.passed} passed, ${counters.failed} failed, ${counters.skipped} skipped`);
+  const averageTime = counters.times.reduce((prev, val) => prev + val, 0) / counters.times.length;
+  console.log(`\n- ${counters.failed ? '(!) ' : ''}took ${Date.now() - startTime} ms (${Math.round(averageTime)} avg), ${counters.passed} passed, ${counters.failed} failed, ${counters.skipped} skipped`);
 })();
