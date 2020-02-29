@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class screamingbaby extends ImageCode {
   static benchmark(benchmark) {
@@ -9,20 +9,26 @@ module.exports = class screamingbaby extends ImageCode {
   }
 
   async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(800, 600);
-    const foreground = await Jimp.read(this.resource('screamingbaby.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(800, 600, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('screamingbaby.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 407, y: 867 },
       topRight: { x: 935, y: 618 },
       bottomLeft: { x: 630, y: 1275 },
       bottomRight: { x: 1116, y: 937 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
+        width: metadata.width,
+        height: metadata.height,
         color: 'white',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('screamingbaby.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    this.send(msg, canvas);
   }
 };

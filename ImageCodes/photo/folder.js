@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class folder extends ImageCode {
   static benchmark(benchmark) {
@@ -9,20 +9,26 @@ module.exports = class folder extends ImageCode {
   }
 
   async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(500, 500);
-    const foreground = await Jimp.read(this.resource('folder.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(500, 500, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('folder.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 175, y: 54 },
       topRight: { x: 522, y: 142 },
       bottomLeft: { x: 175, y: 422 },
       bottomRight: { x: 522, y: 510 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
+        width: metadata.width,
+        height: metadata.height,
         color: 'white',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('folder.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    this.send(msg, canvas);
   }
 };

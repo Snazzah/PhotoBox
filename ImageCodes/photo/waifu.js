@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class waifu extends ImageCode {
   static benchmark(benchmark) {
@@ -9,20 +9,26 @@ module.exports = class waifu extends ImageCode {
   }
 
   async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(155, 173);
-    const foreground = await Jimp.read(this.resource('waifu.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(155, 173, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('waifu.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 151, y: 178 },
       topRight: { x: 252, y: 202 },
       bottomLeft: { x: 97, y: 321 },
       bottomRight: { x: 199, y: 351 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
+        width: metadata.width,
+        height: metadata.height,
         color: 'white',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('waifu.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    this.send(msg, canvas);
   }
 };

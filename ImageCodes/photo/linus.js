@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class linus extends ImageCode {
   static benchmark(benchmark) {
@@ -9,20 +9,26 @@ module.exports = class linus extends ImageCode {
   }
 
   async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(800, 450);
-    const foreground = await Jimp.read(this.resource('linus.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(800, 450, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('linus.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 58, y: 184 },
       topRight: { x: 369, y: 143 },
       bottomLeft: { x: 108, y: 563 },
       bottomRight: { x: 392, y: 402 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
-        color: 0x000000ff,
+        width: metadata.width,
+        height: metadata.height,
+        color: 'black',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('linus.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    this.send(msg, canvas);
   }
 };
