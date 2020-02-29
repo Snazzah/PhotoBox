@@ -81,6 +81,7 @@ module.exports = class ImageCode {
     case 'gm': return await this.imBuffer(img);
     case 'Jimp': return await this.jimpBuffer(img);
     case 'Buffer': return img;
+    case 'Sharp': return await img.toBuffer();
     case 'String': return await fetch(img).then(r => r.buffer());
     default: throw new Error('Unsupported class');
     }

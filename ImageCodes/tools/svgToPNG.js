@@ -1,5 +1,6 @@
 /* globals ImageCode */
 const config = require('config');
+const sharp = require('sharp');
 
 module.exports = class svgToPNG extends ImageCode {
   static benchmark(benchmark) {
@@ -10,10 +11,9 @@ module.exports = class svgToPNG extends ImageCode {
 
   async process(msg) {
     const size = config.get('options.svgSize');
-    this.sendBuffer(msg, await this.webshotHTML(msg.svg, {
-      width: size,
-      height: size,
-      css: `svg{width:${size}px;height:${size}px}`,
-    }));
+    const metadata = await sharp(Buffer.from(msg.svg)).metadata();
+    const maxSize = metadata.width > metadata.height ? metadata.width : metadata.height;
+    const densityPerPixel = metadata.density / maxSize;
+    this.sendBuffer(msg, await sharp(Buffer.from(msg.svg), { density: densityPerPixel * size }).png());
   }
 };
