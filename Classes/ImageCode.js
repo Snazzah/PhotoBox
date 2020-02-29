@@ -6,14 +6,9 @@ const GIFEncoder = require('gif-encoder');
 const webshot = require('webshot');
 
 module.exports = class ImageCode {
-  constructor(imageMaster) {
-    this.im = imageMaster;
-  }
-
   process() {
     return true;
   }
-
 
   rInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
