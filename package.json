@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "eslint": "^6.5.1",
-    "jshint": "^2.10.2",
-    "ora": "^4.0.3"
+    "jshint": "^2.10.2"
   }
 }

@@ -1,4 +1,3 @@
-const ora = require('ora');
 const fs = require('fs');
 const path = require('path');
 const config = require('config');
@@ -33,6 +32,8 @@ const counters = {
 
 const startTime = Date.now();
 
+console.log('');
+
 (async () => {
   for (let i = 0, len = imageCodes.length; i < len; i++) {
     const imageCode = imageCodes[i];
@@ -42,7 +43,6 @@ const startTime = Date.now();
       continue;
     }
 
-    const spinner = ora(imageCode.code).start();
     const codeStartTime = Date.now();
 
     try {
@@ -51,12 +51,12 @@ const startTime = Date.now();
         ...imageCode.message,
       });
       counters.passed++;
-      spinner.succeed(`${imageCode.code}: ${Date.now() - codeStartTime} ms`);
+      console.log(`- ${imageCode.code}: ${Date.now() - codeStartTime} ms`);
     } catch (e) {
       counters.failed++;
-      spinner.fail(`${imageCode.code}: ${Date.now() - codeStartTime} ms`);
+      console.log(`! ${imageCode.code}: ${Date.now() - codeStartTime} ms`);
     }
   }
 
-  console.log(`\n- ${counters.failed ? '(!) ' : ''} took ${Date.now() - startTime} ms, ${counters.passed} passed, ${counters.failed} failed, ${counters.skipped} skipped`);
+  console.log(`\n- ${counters.failed ? '(!) ' : ''}took ${Date.now() - startTime} ms, ${counters.passed} passed, ${counters.failed} failed, ${counters.skipped} skipped`);
 })();
