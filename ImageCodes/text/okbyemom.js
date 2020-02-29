@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class okbyemom extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.SMALL_WORD,
+    };
+  }
+
   async process(msg) {
     const txt = im(290, 31).command('convert');
     txt.out('-fill').out('#000000');

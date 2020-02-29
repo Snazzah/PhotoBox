@@ -1,4 +1,4 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const config = require('config');
 
 module.exports = class svgToPNG extends ImageCode {

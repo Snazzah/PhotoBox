@@ -1,8 +1,16 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class ttt extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+      username: benchmark.USERNAME,
+      text: benchmark.NORMAL_TEXT,
+    };
+  }
+
   async process(msg) {
     const title = im(305, 13).command('convert').antialias(false);
     title.font(this.resource('fonts', 'tahoma.ttf'), 11);

@@ -1,4 +1,4 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const embossMatrix = [
   [2, -1, 0],
@@ -7,6 +7,12 @@ const embossMatrix = [
 ];
 
 module.exports = class deepfry extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+    };
+  }
+
   async process(msg) {
     const img = await Jimp.read(msg.avatar);
     const width = img.bitmap.width;

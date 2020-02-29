@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class eliminated extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.SMALL_WORD,
+    };
+  }
+
   async imToJimpAutocrop(img) {
     const image = await this.imToJimp(img);
     return image.autocrop();

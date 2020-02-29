@@ -13,6 +13,7 @@ const BenchmarkConstants = {
   PICTURE2: fs.readFileSync(path.join(__dirname, './resources/picture2.jpg')),
   NORMAL_TEXT: 'Making a 140-character sentence is not always that easy when you are constantly thinking of words to use that may or may not be cool to use.',
   USERNAME: 'PhotoBox',
+  SMALL_WORD: 'Potato',
 };
 
 const imageCodesPaths = Util.flatten(Util.iterateFolder(path.resolve(config.get('image_codes'))));

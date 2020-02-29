@@ -1,4 +1,4 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class resizeTo extends ImageCode {

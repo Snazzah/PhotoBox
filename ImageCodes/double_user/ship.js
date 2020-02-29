@@ -1,7 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class ship extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+      avatar2: benchmark.PICTURE2,
+    };
+  }
+
   async process(msg) {
     const avatar = await Jimp.read(msg.avatar);
     const avatar2 = await Jimp.read(msg.avatar2);

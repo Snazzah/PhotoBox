@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class firstwords extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.NORMAL_TEXT,
+    };
+  }
+
   async process(msg) {
     const top = im(440, 77).command('convert');
     top.font(this.resource('fonts', 'comic.ttf'), 55);

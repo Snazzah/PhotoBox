@@ -1,7 +1,13 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class nutbutton extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.SMALL_WORD,
+    };
+  }
+
   async process(msg) {
     const text = await Jimp.read(await this.createCaption({
       text: msg.text.toUpperCase(),

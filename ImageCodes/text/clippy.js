@@ -1,7 +1,13 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class clippy extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.NORMAL_TEXT,
+    };
+  }
+
   async process(msg) {
     const text = await Jimp.read(await this.createCaption({
       text: msg.text,
