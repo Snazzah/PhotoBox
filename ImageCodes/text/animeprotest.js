@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class animeprotest extends ImageCode {
@@ -19,11 +19,14 @@ module.exports = class animeprotest extends ImageCode {
     body.command('convert');
     body.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     body.out('0,0,7,1 116,0,115,4 0,92,2,84 116,92,109,90');
-    const bodytext = await this.imToJimp(body);
-    const foreground = await Jimp.read(this.resource('animeprotest.png'));
-    const img = new Jimp(219, 300, 0xf9f7f8ff);
-    img.composite(bodytext, 60, 5).composite(foreground, 0, 0);
+    const bodytext = await this.imBuffer(body);
 
-    this.sendJimp(msg, img);
+    const canvas = sharp(this.resource('animeprotest.png'))
+      .composite([
+        { input: bodytext, left: 60, top: 5 },
+        this.compositeBackground('#f9f7f8', 219, 300),
+      ]);
+
+    this.send(msg, canvas);
   }
 };

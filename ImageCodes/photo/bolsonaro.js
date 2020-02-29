@@ -19,7 +19,7 @@ module.exports = class bolsonaro extends ImageCode {
       canvas: {
         width: foreground.bitmap.width,
         height: foreground.bitmap.height,
-        color: 0xddddddff,
+        color: '#ddd',
       },
     }));
     canvas.composite(foreground, 0, 0);

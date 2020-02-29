@@ -1,5 +1,6 @@
 const Jimp = require('jimp');
 const path = require('path');
+const sharp = require('sharp');
 const fetch = require('node-fetch');
 const im = require('gm').subClass({ imageMagick: true });
 const GIFEncoder = require('gif-encoder');
@@ -149,19 +150,23 @@ module.exports = class ImageCode {
     });
   }
 
-  async perspectify(jimpImage, { topLeft, topRight, bottomLeft, bottomRight, canvas = null }) {
-    if(jimpImage.constructor.name !== 'Jimp')
-      jimpImage = await new Jimp(await this.toBuffer(jimpImage));
+  async perspectify(image, { topLeft, topRight, bottomLeft, bottomRight, canvas = null }) {
+    if(image.constructor.name !== 'Sharp')
+      image = sharp(await this.toBuffer(image));
 
-    let imageToPerspect = jimpImage;
-    const imgWidth = jimpImage.bitmap.width;
-    const imgHeight = jimpImage.bitmap.height;
-    if(canvas) {
-      const jimpCanvas = new Jimp(canvas.width, canvas.height, canvas.color || 0xffffff00);
-      jimpCanvas.composite(jimpImage, 0, 0);
-      imageToPerspect = jimpCanvas;
-    }
-    const imImage = im(await this.jimpBuffer(imageToPerspect));
+    const metadata = await image.metadata();
+    const imgWidth = metadata.width;
+    const imgHeight = metadata.height;
+    if(canvas)
+      image = image.flatten(canvas.color || 'transparent')
+        .extend({
+          top: 0,
+          left: 0,
+          bottom: canvas.height - imgHeight <= 0 ? 0 : canvas.height - imgHeight,
+          right: canvas.width - imgWidth <= 0 ? 0 : canvas.width - imgWidth,
+          background: canvas.color || 'transparent',
+        });
+    const imImage = im(await this.toBuffer(image));
     imImage.command('convert');
     imImage.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     imImage.out([

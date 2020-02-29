@@ -19,7 +19,7 @@ module.exports = class screamingbaby extends ImageCode {
       canvas: {
         width: foreground.bitmap.width,
         height: foreground.bitmap.height,
-        color: 0xffffffff,
+        color: 'white',
       },
     }));
     canvas.composite(foreground, 0, 0);
