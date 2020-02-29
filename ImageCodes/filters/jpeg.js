@@ -5,7 +5,6 @@ module.exports = class jpeg extends ImageCode {
   static benchmark(benchmark) {
     return {
       url: benchmark.PICTURE1,
-      amount: 50,
     };
   }
 

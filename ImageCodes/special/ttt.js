@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class ttt extends ImageCode {
@@ -26,13 +26,19 @@ module.exports = class ttt extends ImageCode {
     img.out('-gravity').out('northwest');
     img.out(`caption:Something tells you some of this person's last words were: '${msg.text}--.'`);
 
-    const avatar = await Jimp.read(msg.avatar);
-    const toptxt = await this.imToJimp(title);
-    const body = await this.imToJimp(img);
-    const wind = await Jimp.read(this.resource('ttt.png'));
-    avatar.resize(32, 32);
-    wind.composite(avatar, 32, 56).composite(toptxt, 12, 10).composite(body, 108, 130);
+    const toptxt = await this.imBuffer(title);
+    const body = await this.imBuffer(img);
 
-    this.sendJimp(msg, wind);
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(32, 32)
+      .toBuffer();
+    const canvas = sharp(this.resource('ttt.png'))
+      .composite([
+        { input: avatar, left: 32, top: 56 },
+        { input: toptxt, left: 12, top: 10 },
+        { input: body, left: 108, top: 130 },
+      ]);
+
+    this.send(msg, canvas);
   }
 };

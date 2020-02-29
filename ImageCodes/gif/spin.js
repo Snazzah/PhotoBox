@@ -17,12 +17,12 @@ module.exports = class spin extends ImageCode {
     const tc = tinycolor({ r: color[0], g: color[1], b: color[2] }).complement();
     const canvas = new Jimp(256, 256, parseInt(tc.toHex8(), 16));
     canvas.composite(avatar, 0, 0);
-    const frameCount = 179;
+    const frameCount = 89;
     const frames = [];
     let temp;
     for (let i = 0; i < frameCount; i++) {
       temp = canvas.clone();
-      temp.rotate(i * 2, false);
+      temp.rotate(i * 4, false);
       frames.push(temp.bitmap.data);
     }
 

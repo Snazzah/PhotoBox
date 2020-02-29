@@ -6,7 +6,6 @@ module.exports = class magik extends ImageCode {
   static benchmark(benchmark) {
     return {
       avatar: benchmark.PICTURE1,
-      amount: 50,
     };
   }
 

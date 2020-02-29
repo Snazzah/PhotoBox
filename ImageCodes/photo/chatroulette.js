@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class chatroulette extends ImageCode {
   static benchmark(benchmark) {
@@ -9,9 +9,15 @@ module.exports = class chatroulette extends ImageCode {
   }
 
   async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(320, 240);
-    const background = await Jimp.read(this.resource('chatroulette.png'));
-    background.composite(containedAvatar, 19, 350);
-    this.sendJimp(msg, background);
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(320, 240, { fit: 'cover' })
+      .toBuffer();
+    const canvas = sharp(this.resource('chatroulette.png'))
+      .composite([
+        { input: avatar, left: 19, top: 350, blend: 'dest-over' },
+        this.compositeBackground('black', 538, 660),
+      ]);
+
+    this.send(msg, canvas);
   }
 };

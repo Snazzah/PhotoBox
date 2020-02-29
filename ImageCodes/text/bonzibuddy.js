@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class bonzibuddy extends ImageCode {
   static benchmark(benchmark) {
@@ -9,16 +9,17 @@ module.exports = class bonzibuddy extends ImageCode {
   }
 
   async process(msg) {
-    const text = await Jimp.read(await this.createCaption({
+    const body = await this.createCaption({
       text: msg.text,
       font: 'VcrOcdMono.ttf',
       size: '187x118',
       gravity: 'North',
-    }));
+    });
+    const canvas = sharp(this.resource('bonzibuddy.png'))
+      .composite([
+        { input: body, left: 19, top: 12 },
+      ]);
 
-    const img = await Jimp.read(this.resource('bonzibuddy.png'));
-    img.composite(text, 19, 12);
-
-    this.sendJimp(msg, img);
+    this.send(msg, canvas);
   }
 };

@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class ship extends ImageCode {
   static benchmark(benchmark) {
@@ -10,13 +10,18 @@ module.exports = class ship extends ImageCode {
   }
 
   async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
-    const avatar2 = await Jimp.read(msg.avatar2);
-    const canv = await Jimp.read(this.resource('ship.png'));
-    avatar.resize(150, 150);
-    avatar2.resize(150, 150);
-    canv.composite(avatar, 0, 0).composite(avatar2, 300, 0);
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(150, 150)
+      .toBuffer();
+    const avatar2 = await sharp(await this.toBuffer(msg.avatar2))
+      .resize(150, 150)
+      .toBuffer();
+    const canvas = sharp(this.resource('ship.png'))
+      .composite([
+        { input: avatar, gravity: 'west' },
+        { input: avatar2, gravity: 'east' },
+      ]);
 
-    this.sendJimp(msg, canv);
+    this.send(msg, canvas);
   }
 };

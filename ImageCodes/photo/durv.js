@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class durv extends ImageCode {
   static benchmark(benchmark) {
@@ -9,13 +9,15 @@ module.exports = class durv extends ImageCode {
   }
 
   async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
-    avatar.cover(157, 226);
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(157, 226, { fit: 'cover' })
+      .toBuffer();
+    const canvas = sharp(this.resource('durv.png'))
+      .composite([
+        { input: avatar, left: 4, top: 0, blend: 'dest-over' },
+        this.compositeBackground('black', 401, 226),
+      ]);
 
-    const foreground = await Jimp.read(this.resource('durv.png'));
-    const canvas = new Jimp(401, 226, 0x000000ff);
-    canvas.composite(avatar, 4, 0).composite(foreground, 0, 0);
-
-    this.sendJimp(msg, canvas);
+    this.send(msg, canvas);
   }
 };

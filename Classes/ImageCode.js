@@ -189,4 +189,20 @@ module.exports = class ImageCode {
       stream.on('end', () => resolve(Buffer.concat(bufferArray)));
     });
   }
+
+  // SHARP
+
+  compositeBackground(color, width, height) {
+    return {
+      input: {
+        create: {
+          width,
+          height,
+          channels: 3,
+          background: color,
+        },
+      },
+      blend: 'dest-over',
+    };
+  }
 };

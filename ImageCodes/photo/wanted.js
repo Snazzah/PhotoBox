@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class wanted extends ImageCode {
   static benchmark(benchmark) {
@@ -10,19 +10,23 @@ module.exports = class wanted extends ImageCode {
   }
 
   async process(msg) {
-    const body = await Jimp.read(await this.createCaption({
+    const body = await this.createCaption({
       text: msg.username.toUpperCase(),
       font: 'edmunds.ttf',
       size: '517x54',
       gravity: 'North',
-    }));
-    const bg = await Jimp.read(this.resource('wanted.png'));
-    const overlay = await Jimp.read(this.resource('wanted_overlay.png'));
-    const avatar = (await Jimp.read(msg.avatar)).contain(545, 536).sepia().color([
-      { apply: 'mix', params: [ '#d09245', 60 ] },
-    ]);
-    bg.composite(avatar, 166, 422).composite(overlay, 0, 0).composite(body, 184, 962);
+    });
+    const avatar = await sharp(await this.toBuffer(msg.avatar))
+      .resize(545, 536, { fit: 'contain' })
+      .tint('#eac28e')
+      .toBuffer();
+    const canvas = sharp(this.resource('wanted.png'))
+      .composite([
+        { input: avatar, left: 166, top: 422 },
+        { input: this.resource('wanted_overlay.png'), left: 0, top: 0 },
+        { input: body, left: 184, top: 962 },
+      ]);
 
-    this.sendJimp(msg, bg);
+    this.send(msg, canvas);
   }
 };
