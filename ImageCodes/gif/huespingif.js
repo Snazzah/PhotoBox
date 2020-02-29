@@ -1,7 +1,13 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class huespingif extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      url: benchmark.PICTURE1,
+    };
+  }
+
   async process(msg) {
     const img = await Jimp.read(msg.url);
     if(img.bitmap.width > 300) img.resize(300, Jimp.AUTO);

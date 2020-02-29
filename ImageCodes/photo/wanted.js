@@ -1,7 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class wanted extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+      username: benchmark.USERNAME,
+    };
+  }
+
   async process(msg) {
     const body = await Jimp.read(await this.createCaption({
       text: msg.username.toUpperCase(),

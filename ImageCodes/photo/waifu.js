@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class waifu extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+    };
+  }
+
   async process(msg) {
     const containedavatar = (await Jimp.read(msg.avatar)).cover(155, 173);
     const avatar = (new Jimp(155, 173)).composite(containedavatar, 0, 0);

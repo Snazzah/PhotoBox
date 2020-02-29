@@ -1,4 +1,4 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const sm = require('simple-markdown');
 const twemoji = require('twemoji');

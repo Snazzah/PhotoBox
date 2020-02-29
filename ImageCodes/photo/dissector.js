@@ -1,14 +1,16 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class dissector extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+    };
+  }
+
   async process(msg) {
     const overlay = await Jimp.read(this.resource('dissector_overlay.png'));
     const background = await Jimp.read(this.resource('dissector.png'));
-    console.log({
-      width: background.bitmap.width,
-      height: background.bitmap.height,
-    });
     const foreground = await Jimp.read(await this.perspectify(await Jimp.read(msg.avatar), {
       topLeft: { x: 297, y: 208 },
       topRight: { x: 1120, y: 105 },

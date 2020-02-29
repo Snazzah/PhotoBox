@@ -1,7 +1,13 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 
 module.exports = class blurple extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+    };
+  }
+
   async process(msg) {
     const img = await Jimp.read(msg.avatar);
     img.greyscale().scan(0, 0, img.bitmap.width, img.bitmap.height, function(x, y, idx) {

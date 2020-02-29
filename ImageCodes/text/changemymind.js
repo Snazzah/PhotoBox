@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class changemymind extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.NORMAL_TEXT,
+    };
+  }
+
   async process(msg) {
     const body = im(await this.createCaption({
       text: msg.text.toUpperCase(),

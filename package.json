@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node main.js",
     "eslint": "eslint .",
-    "jshint": "jshint ."
+    "jshint": "jshint .",
+    "benchmark": "node benchmark/index.js"
   },
   "author": "Snazzah <suggesttosnazzy@gmail.com>",
   "license": "Apache-2.0",

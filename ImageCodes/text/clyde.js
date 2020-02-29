@@ -1,8 +1,14 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class clyde extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      text: benchmark.NORMAL_TEXT,
+    };
+  }
+
   async process(msg) {
     const img = im(864 - 150, 1000).command('convert');
     img.font(this.resource('fonts', 'whitney.ttf'), 20);

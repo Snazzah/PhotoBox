@@ -6,14 +6,9 @@ const GIFEncoder = require('gif-encoder');
 const webshot = require('webshot');
 
 module.exports = class ImageCode {
-  constructor(imageMaster) {
-    this.im = imageMaster;
-  }
-
   process() {
     return true;
   }
-
 
   rInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,10 +40,15 @@ module.exports = class ImageCode {
   }
 
   sendBuffer(msg, buf) {
-    msg.status = 'success';
-    msg.uptime = process.uptime();
-    msg.buffer = buf.toString('base64');
-    return process.send(msg);
+    return process.send({
+      id: msg.id,
+      code: msg.code,
+      quit: msg.quit,
+
+      status: 'success',
+      uptime: process.uptime(),
+      buffer: buf.toString('base64'),
+    });
   }
 
   async sendGIF(msg, width, height, frames, repeat, delay, trans) {

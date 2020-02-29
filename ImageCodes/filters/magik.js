@@ -1,8 +1,15 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class magik extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+      amount: 50,
+    };
+  }
+
   async process(msg) {
     const ravatar = await Jimp.read(msg.avatar);
     ravatar.resize(Jimp.AUTO, 512);

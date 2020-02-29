@@ -1,8 +1,15 @@
-const { ImageCode } = require('photobox');
+/* globals ImageCode */
 const Jimp = require('jimp');
 const colorThief = require('color-thief-jimp');
 
 module.exports = class icey extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      avatar: benchmark.PICTURE1,
+      amount: 50,
+    };
+  }
+
   async process(msg) {
     const img = await Jimp.read(msg.avatar);
     const avg = colorThief.getColor(img).reduce((p, c) => p + c) / 3;
