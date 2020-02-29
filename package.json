@@ -31,6 +31,7 @@
     "photobox-core": "./Core",
     "redis": "^2.8.0",
     "require-reload": "^0.2.2",
+    "sharp": "^0.24.1",
     "simple-markdown": "^0.7.2",
     "text-table": "^0.2.0",
     "tinycolor2": "^1.4.1",

@@ -11,6 +11,7 @@ process.env.LOGGER_DEBUG = 'false';
 const BenchmarkConstants = {
   PICTURE1: fs.readFileSync(path.join(__dirname, './resources/picture1.jpg')),
   PICTURE2: fs.readFileSync(path.join(__dirname, './resources/picture2.jpg')),
+  SVG: fs.readFileSync(path.join(__dirname, './resources/svg.svg')).toString('utf8'),
   NORMAL_TEXT: 'Making a 140-character sentence is not always that easy when you are constantly thinking of words to use that may or may not be cool to use.',
   USERNAME: 'PhotoBox',
   SMALL_WORD: 'Potato',

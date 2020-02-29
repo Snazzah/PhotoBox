@@ -2,6 +2,12 @@
 const config = require('config');
 
 module.exports = class svgToPNG extends ImageCode {
+  static benchmark(benchmark) {
+    return {
+      svg: benchmark.SVG,
+    };
+  }
+
   async process(msg) {
     const size = config.get('options.svgSize');
     this.sendBuffer(msg, await this.webshotHTML(msg.svg, {
