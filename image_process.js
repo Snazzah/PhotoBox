@@ -47,7 +47,7 @@ class ImageMaster {
         if(msg[k] && msg[k].type === 'Buffer') resultMessage[k] = Buffer.from(msg[k].data);
       });
 
-      const codePath = this.findInFolder(path.resolve(config.get('image_codes')), `${resultMessage.code}.js`);
+      const codePath = msg.path || this.findInFolder(path.resolve(config.get('image_codes')), `${resultMessage.code}.js`);
       if(!codePath) return this.sendError(resultMessage, new Error('Nonexistant code.'), 'master', true);
       const code = new (require(codePath))();
       resultMessage.quit = true;

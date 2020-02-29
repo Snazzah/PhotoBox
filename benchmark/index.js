@@ -49,6 +49,7 @@ console.log('');
     try {
       await IP.send({
         code: imageCode.code,
+        path: imageCode.path,
         ...imageCode.message,
       });
       counters.passed++;
