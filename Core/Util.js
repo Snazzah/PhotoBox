@@ -37,6 +37,8 @@ exports.Media = {
     'image/bmp',
     'image/gif',
     'image/svg+xml',
+    'image/webp',
+    'image/tiff',
   ],
   FILE_EXTS: [
     'png',
@@ -45,6 +47,9 @@ exports.Media = {
     'gif',
     'jpg',
     'svg',
+    'webp',
+    'tiff',
+    'tif',
   ],
   RESPONSE_CODES: {
     OK: 0,
@@ -188,6 +193,16 @@ exports.Media = {
       const pngBuffer = client.IP.sendMessage({ id: exports.Random.id() }, {
         code: 'svgToPNG',
         svg: buffer.toString('utf8'),
+      });
+      return { buffer: pngBuffer, code: exports.Media.RESPONSE_CODES.OK };
+    }
+
+    // Special Case: WebP/TIFF
+    if(['image/webp', 'image/tiff'].includes(fileType.mime)) {
+      client.logger.debug(`Converting ${fileType.ext.toUpperCase()} to PNG`, url);
+      const pngBuffer = client.IP.sendMessage({ id: exports.Random.id() }, {
+        code: 'sharpToPNG',
+        image: buffer,
       });
       return { buffer: pngBuffer, code: exports.Media.RESPONSE_CODES.OK };
     }
