@@ -1,23 +1,28 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class tinder extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      avatar2: benchmark.PICTURE2,
+      avatar: constants.PICTURE1,
+      avatar2: constants.PICTURE2,
     };
   }
 
-  async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
-    const avatar2 = await Jimp.read(msg.avatar2);
-    avatar.resize(218, 218);
-    avatar2.resize(218, 218);
-    const foreground = await Jimp.read(this.resource('tinder.png'));
-    const img = new Jimp(570, 738, 0xffffffff);
-    img.composite(avatar, 53, 288).composite(avatar2, 309, 288).composite(foreground, 0, 0);
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(218, 218)
+      .toBuffer();
+    const avatar2 = await sharp(await this.toBuffer(message.avatar2))
+      .resize(218, 218)
+      .toBuffer();
+    const canvas = sharp(this.resource('tinder.png'))
+      .composite([
+        { input: avatar, left: 53, top: 288, blend: 'dest-over' },
+        { input: avatar2, left: 309, top: 288, blend: 'dest-over' },
+        this.compositeBackground('white', 570, 738),
+      ]);
 
-    this.sendJimp(msg, img);
+    return this.send(message, canvas);
   }
 };

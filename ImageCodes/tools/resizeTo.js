@@ -1,13 +1,18 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class resizeTo extends ImageCode {
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    // msg.ogWidth = img.bitmap.width;
-    // msg.ogHeight = img.bitmap.height;
-    img.resize(msg.width, msg.height);
+  static benchmark(constants) {
+    return {
+      url: constants.PICTURE1,
+      width: constants.RESIZE_WIDTH,
+      height: constants.RESIZE_HEIGHT,
+    };
+  }
 
-    this.sendJimp(msg, img);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
+      .resize(message.width, message.height);
+    return this.send(message, image);
   }
 };

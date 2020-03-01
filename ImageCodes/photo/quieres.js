@@ -1,21 +1,27 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
-const path = require('path');
+const sharp = require('sharp');
 
 module.exports = class quieres extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    const hand = await Jimp.read(path.join(__dirname, '..', '..', 'assets', 'quieres.png'));
-    const handSize = img.bitmap.height > img.bitmap.width ? img.bitmap.width : img.bitmap.height;
-    hand.resize(handSize, Jimp.AUTO);
-    img.composite(hand, img.bitmap.width - hand.bitmap.width, img.bitmap.height - hand.bitmap.height);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url));
+    const metadata = await image.metadata();
+    const handSize = metadata.height > metadata.width ? metadata.width : metadata.height;
 
-    this.sendJimp(msg, img);
+    const hand = await sharp(this.resource('quieres.png'))
+      .resize({ width: handSize / 2 })
+      .toBuffer();
+
+    return this.send(message, image.composite([
+      {
+        input: hand,
+        gravity: 'southeast',
+      },
+    ]));
   }
 };

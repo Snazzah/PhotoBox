@@ -1,28 +1,34 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class bolsonaro extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(400, 220);
-    const foreground = await Jimp.read(this.resource('bolsonaro.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(400, 220, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('bolsonaro.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 317, y: 66 },
       topRight: { x: 676, y: 61 },
       bottomLeft: { x: 317, y: 259 },
       bottomRight: { x: 670, y: 262 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
-        color: 0xddddddff,
+        width: metadata.width,
+        height: metadata.height,
+        color: '#ddd',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('bolsonaro.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    return this.send(message, canvas);
   }
 };

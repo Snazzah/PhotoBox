@@ -1,24 +1,25 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class dogbite extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
-    const bodytext = await Jimp.read(await this.createCaption({
-      text: msg.text,
+  async process(message) {
+    const body = await this.createCaption({
+      text: message.text,
       font: 'comic.ttf',
       size: '218x48',
       gravity: 'North',
-    }));
+    });
+    const canvas = sharp(this.resource('dogbite.png'))
+      .composite([
+        { input: body, left: 19, top: 256 },
+      ]);
 
-    const canvas = await Jimp.read(this.resource('dogbite.png'));
-    canvas.composite(bodytext, 19, 256);
-
-    this.sendJimp(msg, canvas);
+    return this.send(message, canvas);
   }
 };

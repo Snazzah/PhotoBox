@@ -7,27 +7,27 @@ const embossMatrix = [
 ];
 
 module.exports = class deepfry extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.avatar);
-    const width = img.bitmap.width;
-    const height = img.bitmap.height;
-    img.scale(0.75, Jimp.RESIZE_HERMITE);
-    img.resize(width * 0.88, height * 0.88, Jimp.RESIZE_BILINEAR);
-    img.resize(width * 0.9, height * 0.9, Jimp.RESIZE_BICUBIC);
-    img.resize(width, height, Jimp.RESIZE_BICUBIC);
-    img.posterize(4).brightness(0.1).contrast(1);
-    img.color([
+  async process(message) {
+    const image = await Jimp.read(message.avatar);
+    const width = image.bitmap.width;
+    const height = image.bitmap.height;
+    image.scale(0.75, Jimp.RESIZE_HERMITE);
+    image.resize(width * 0.88, height * 0.88, Jimp.RESIZE_BILINEAR);
+    image.resize(width * 0.9, height * 0.9, Jimp.RESIZE_BICUBIC);
+    image.resize(width, height, Jimp.RESIZE_BICUBIC);
+    image.posterize(4).brightness(0.1).contrast(1);
+    image.color([
       { apply: 'mix', params: [ '#f00', 0.75 ] },
       { apply: 'mix', params: [ '#ff0', 0.75 ] },
     ]);
-    img.convolute(embossMatrix);
+    image.convolute(embossMatrix);
 
-    this.sendJimp(msg, img);
+    return this.send(message, image);
   }
 };

@@ -1,16 +1,16 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class grayscale extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    img.greyscale();
-    this.sendJimp(msg, img);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
+      .greyscale();
+    return this.send(message, image);
   }
 };

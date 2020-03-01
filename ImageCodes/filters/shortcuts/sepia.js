@@ -2,15 +2,15 @@
 const Jimp = require('jimp');
 
 module.exports = class sepia extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    img.sepia();
-    this.sendJimp(msg, img);
+  async process(message) {
+    const image = await Jimp.read(message.url);
+    image.sepia();
+    return this.send(message, image);
   }
 };

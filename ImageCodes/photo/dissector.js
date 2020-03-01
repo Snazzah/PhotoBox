@@ -1,27 +1,37 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class dissector extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const overlay = await Jimp.read(this.resource('dissector_overlay.png'));
-    const background = await Jimp.read(this.resource('dissector.png'));
-    const foreground = await Jimp.read(await this.perspectify(await Jimp.read(msg.avatar), {
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(1000, 1000, { fit: 'cover' })
+      .ensureAlpha()
+      .png()
+      .toBuffer();
+    const metadata = await sharp(this.resource('dissector.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 297, y: 208 },
       topRight: { x: 1120, y: 105 },
       bottomLeft: { x: 297, y: 1065 },
       bottomRight: { x: 1120, y: 960 },
       canvas: {
-        width: background.bitmap.width,
-        height: background.bitmap.height,
+        width: metadata.width,
+        height: metadata.height,
+        color: 'transparent',
       },
-    }));
-    background.composite(foreground, 0, 0).composite(overlay, 0, 0);
-    this.sendJimp(msg, background);
+    });
+    const canvas = sharp(this.resource('dissector.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0 },
+        { input: this.resource('dissector_overlay.png'), left: 0, top: 0 },
+      ]);
+
+    return this.send(message, canvas);
   }
 };

@@ -1,31 +1,31 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class huespingif extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    if(img.bitmap.width > 300) img.resize(300, Jimp.AUTO);
-    if(img.bitmap.height > 300) img.resize(Jimp.AUTO, 300);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
+      .resize(300, 300, { fit: 'outside' });
     const frameCount = 35;
     const frames = [];
-    let temp;
     for (let i = 0; i < frameCount; i++) {
-      temp = img.clone();
-      temp.color([
-        {
-          apply: 'spin',
-          params: [i * 10],
-        },
-      ]);
-      frames.push(temp.bitmap.data);
+      const imageFrame = await image.clone()
+        .modulate({
+          hue: i * 10,
+        })
+        .toColourspace('rgba')
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+      frames.push(imageFrame.data);
     }
 
-    this.sendGIF(msg, img.bitmap.width, img.bitmap.height, frames, 0, 20);
+    const metadata = await sharp(await image.png().toBuffer()).metadata();
+
+    return this.sendGIF(message, metadata.width, metadata.height, frames, 0, 20);
   }
 };

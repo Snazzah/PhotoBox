@@ -1,18 +1,19 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class huespin extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
       amount: 50,
     };
   }
 
-  async process(msg) {
-    const img1 = await Jimp.read(msg.url);
-    img1.color([ { apply: 'spin', params: [msg.amount] } ]);
-
-    this.sendJimp(msg, img1);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
+      .modulate({
+        hue: message.amount,
+      });
+    return this.send(message, image);
   }
 };

@@ -1,28 +1,34 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
-const im = require('gm').subClass({ imageMagick: true });
+const sharp = require('sharp');
 
 module.exports = class waifu extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const containedavatar = (await Jimp.read(msg.avatar)).cover(155, 173);
-    const avatar = (new Jimp(155, 173)).composite(containedavatar, 0, 0);
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(155, 173, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('waifu.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
+      topLeft: { x: 151, y: 178 },
+      topRight: { x: 252, y: 202 },
+      bottomLeft: { x: 97, y: 321 },
+      bottomRight: { x: 199, y: 351 },
+      canvas: {
+        width: metadata.width,
+        height: metadata.height,
+        color: 'white',
+      },
+    });
+    const canvas = sharp(this.resource('waifu.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
 
-    const imavatar = im(await this.jimpBuffer(avatar));
-    imavatar.command('convert');
-    imavatar.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
-    imavatar.out('0,0,54,0 155,0,155,24 0,173,0,143 155,173,102,173');
-
-    const jBgImg = await this.imToJimp(imavatar);
-    const foreground = await Jimp.read(this.resource('waifu.png'));
-    const img = new Jimp(450, 344, 0xffffffff);
-    img.composite(jBgImg, 97, 178).composite(foreground, 0, 0);
-
-    this.sendJimp(msg, img);
+    return this.send(message, canvas);
   }
 };

@@ -1,21 +1,19 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
-const im = require('gm').subClass({ imageMagick: true });
+const sharp = require('sharp');
 
 module.exports = class magik extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      amount: 50,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const ravatar = await Jimp.read(msg.avatar);
-    ravatar.resize(Jimp.AUTO, 512);
-    const avatar = im(await this.toBuffer(ravatar));
-    avatar.out('-liquid-rescale').out('180%');
-    avatar.out('-liquid-rescale').out('60%');
-    this.sendIM(msg, avatar);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.avatar))
+      .resize(512, 512, { fit: 'outside' });
+    const scaledImage = await this.toIM(image);
+    scaledImage.out('-liquid-rescale').out('180%');
+    scaledImage.out('-liquid-rescale').out('60%');
+    return this.send(message, scaledImage);
   }
 };

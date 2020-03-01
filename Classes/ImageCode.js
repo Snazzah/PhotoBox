@@ -1,5 +1,6 @@
 const Jimp = require('jimp');
 const path = require('path');
+const sharp = require('sharp');
 const fetch = require('node-fetch');
 const im = require('gm').subClass({ imageMagick: true });
 const GIFEncoder = require('gif-encoder');
@@ -23,17 +24,6 @@ module.exports = class ImageCode {
   }
 
   // SENDING
-
-  sendJimp(msg, img) {
-    img.getBuffer(Jimp.MIME_PNG, (err, buf) => {
-      if (err) throw err;
-      return this.sendBuffer(msg, buf);
-    });
-  }
-
-  async sendIM(msg, img) {
-    return this.sendBuffer(msg, await this.imBuffer(img));
-  }
 
   async send(msg, buf) {
     return this.sendBuffer(msg, await this.toBuffer(buf));
@@ -81,6 +71,7 @@ module.exports = class ImageCode {
     case 'gm': return await this.imBuffer(img);
     case 'Jimp': return await this.jimpBuffer(img);
     case 'Buffer': return img;
+    case 'Sharp': return await img.toBuffer();
     case 'String': return await fetch(img).then(r => r.buffer());
     default: throw new Error('Unsupported class');
     }
@@ -94,6 +85,18 @@ module.exports = class ImageCode {
 
   async imToJimp(img) {
     return await Jimp.read(await this.imBuffer(img));
+  }
+
+  async toIM(image) {
+    return im(await this.toBuffer(image));
+  }
+
+  async toJimp(image) {
+    return await Jimp.read(await this.toBuffer(image));
+  }
+
+  async toSharp(image) {
+    return sharp(await this.toBuffer(image));
   }
 
   // CREATE STUFF
@@ -148,19 +151,23 @@ module.exports = class ImageCode {
     });
   }
 
-  async perspectify(jimpImage, { topLeft, topRight, bottomLeft, bottomRight, canvas = null }) {
-    if(jimpImage.constructor.name !== 'Jimp')
-      jimpImage = await new Jimp(await this.toBuffer(jimpImage));
+  async perspectify(image, { topLeft, topRight, bottomLeft, bottomRight, canvas = null }) {
+    if(image.constructor.name !== 'Sharp')
+      image = sharp(await this.toBuffer(image));
 
-    let imageToPerspect = jimpImage;
-    const imgWidth = jimpImage.bitmap.width;
-    const imgHeight = jimpImage.bitmap.height;
-    if(canvas) {
-      const jimpCanvas = new Jimp(canvas.width, canvas.height, canvas.color || 0xffffff00);
-      jimpCanvas.composite(jimpImage, 0, 0);
-      imageToPerspect = jimpCanvas;
-    }
-    const imImage = im(await this.jimpBuffer(imageToPerspect));
+    const metadata = await image.metadata();
+    const imgWidth = metadata.width;
+    const imgHeight = metadata.height;
+    if(canvas)
+      image = image.flatten(canvas.color || 'transparent')
+        .extend({
+          top: 0,
+          left: 0,
+          bottom: canvas.height - imgHeight <= 0 ? 0 : canvas.height - imgHeight,
+          right: canvas.width - imgWidth <= 0 ? 0 : canvas.width - imgWidth,
+          background: canvas.color || 'transparent',
+        });
+    const imImage = im(await this.toBuffer(image));
     imImage.command('convert');
     imImage.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
     imImage.out([
@@ -187,5 +194,26 @@ module.exports = class ImageCode {
       stream.on('data', buffer => bufferArray.push(buffer));
       stream.on('end', () => resolve(Buffer.concat(bufferArray)));
     });
+  }
+
+  // SHARP
+
+  compositeBackground(color, width, height) {
+    return {
+      input: {
+        create: {
+          width,
+          height,
+          channels: 3,
+          background: color,
+        },
+      },
+      blend: 'dest-over',
+    };
+  }
+
+  async getOutputMetadata(image) {
+    const buffer = await this.toBuffer(image);
+    return await sharp(buffer).metadata();
   }
 };

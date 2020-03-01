@@ -7,6 +7,20 @@ const emojiData = require('../../assets/fakemessage/emojis');
 const hljs = require('highlight.js');
 
 module.exports = class fakeMessage extends ImageCode {
+  static benchmark(constants) {
+    return {
+      avatar: constants.PICTURE3,
+      username: constants.USERNAME,
+      color: null,
+      bot: false,
+      mentioned: false,
+      text: constants.NORMAL_TEXT,
+      channels: constants.EMPTY_ARRAY,
+      users: constants.EMPTY_ARRAY,
+      roles: constants.EMPTY_ARRAY,
+    };
+  }
+
   hexToRgb(hex) {
     if(hex.length > 7) {hex = hex.slice(0, 7 - hex.length);}
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -148,10 +162,14 @@ module.exports = class fakeMessage extends ImageCode {
       });
   }
 
+  keyValueForEach(obj, func) {
+    return Object.keys(obj).map(o => func(o, obj[o]));
+  }
+
   loadHTMLFile(file, replacements) {
     let html = this.loadFile(`${file}.html`);
     if(Object.keys(replacements).length)
-      replacements.keyValueForEach((k, v) => {
+      this.keyValueForEach(replacements, (k, v) => {
         html = html.replace(new RegExp(`\\$${k.toUpperCase()}\\$`, 'g'), v);
       });
     return html;
@@ -174,22 +192,22 @@ module.exports = class fakeMessage extends ImageCode {
     return text.replace(/[<>&"']/g, chr => SANITIZE_TEXT_CODES[chr]);
   }
 
-  async process(msg) {
-    const parsedMessage = this.parse(msg);
+  async process(message) {
+    const parsedMessage = this.parse(message);
     const date = new Date();
     const html = this.loadHTMLFile('main', {
       theme: 'dark',
       message: parsedMessage,
-      username: this.htmlReplace(msg.username) + (msg.bot ? this.loadHTMLFile('bottag') : ''),
-      color: msg.color || '#fff',
-      avatar: msg.avatar,
-      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+      username: this.htmlReplace(message.username) + (message.bot ? this.loadHTMLFile('bottag') : ''),
+      color: message.color || '#fff',
+      avatar: message.avatar,
+      mentioned: message.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
       timestamp: `Today at ${date.getHours() + 1 > 12 ? date.getHours() - 11 : date.getHours() + 1}:${date.getMinutes().toString().length === 1 ? '0' + date.getMinutes() : date.getMinutes()} ${date.getHours() + 1 > 12 ? 'PM' : 'AM'}`,
     });
     const textCropHTML = this.loadHTMLFile('main', {
       theme: 'dark',
       message: parsedMessage,
-      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+      mentioned: message.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
     });
 
     const webShotBuff = await this.webshotHTML(html, {
@@ -201,10 +219,10 @@ module.exports = class fakeMessage extends ImageCode {
       width: 500,
       height: 500,
     });
-    const img = await Jimp.read(webShotBuff);
-    const textCropImg = (await Jimp.read(textCropBuffer)).autocrop(false).autocrop(false);
-    const final = new Jimp(500, textCropImg.bitmap.height + 40);
-    final.composite(img, 0, 0).autocrop(false);
-    this.sendJimp(msg, final);
+    const image = await Jimp.read(webShotBuff);
+    const textCrop = (await Jimp.read(textCropBuffer)).autocrop(false).autocrop(false);
+    const canvas = new Jimp(500, textCrop.bitmap.height + 40);
+    canvas.composite(image, 0, 0).autocrop(false);
+    return this.send(message, canvas);
   }
 };

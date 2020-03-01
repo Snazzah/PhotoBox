@@ -1,18 +1,24 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class studying extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).cover(276, 248);
-    const foreground = await Jimp.read(this.resource('studying.png'));
-    const canvas = new Jimp(foreground.bitmap.width, foreground.bitmap.height, 0x000000ff);
-    canvas.composite(containedAvatar, 92, 198).composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(276, 248, { fit: 'cover' })
+      .flop()
+      .toBuffer();
+    const canvas = sharp(this.resource('studying.png'))
+      .composite([
+        { input: avatar, left: 92, top: 198, blend: 'dest-over' },
+        this.compositeBackground('black', 563, 999),
+      ]);
+
+    return this.send(message, canvas);
   }
 };

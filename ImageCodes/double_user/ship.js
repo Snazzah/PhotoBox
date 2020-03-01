@@ -1,22 +1,27 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class ship extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      avatar2: benchmark.PICTURE2,
+      avatar: constants.PICTURE1,
+      avatar2: constants.PICTURE2,
     };
   }
 
-  async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
-    const avatar2 = await Jimp.read(msg.avatar2);
-    const canv = await Jimp.read(this.resource('ship.png'));
-    avatar.resize(150, 150);
-    avatar2.resize(150, 150);
-    canv.composite(avatar, 0, 0).composite(avatar2, 300, 0);
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(150, 150)
+      .toBuffer();
+    const avatar2 = await sharp(await this.toBuffer(message.avatar2))
+      .resize(150, 150)
+      .toBuffer();
+    const canvas = sharp(this.resource('ship.png'))
+      .composite([
+        { input: avatar, gravity: 'west' },
+        { input: avatar2, gravity: 'east' },
+      ]);
 
-    this.sendJimp(msg, canv);
+    return this.send(message, canvas);
   }
 };

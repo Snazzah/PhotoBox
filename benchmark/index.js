@@ -11,9 +11,18 @@ process.env.LOGGER_DEBUG = 'false';
 const BenchmarkConstants = {
   PICTURE1: fs.readFileSync(path.join(__dirname, './resources/picture1.jpg')),
   PICTURE2: fs.readFileSync(path.join(__dirname, './resources/picture2.jpg')),
+  PICTURE3: fs.readFileSync(path.join(__dirname, './resources/picture3.png')),
+  WEBP: fs.readFileSync(path.join(__dirname, './resources/webp.webp')),
+  SVG: fs.readFileSync(path.join(__dirname, './resources/svg.svg')).toString('utf8'),
+
   NORMAL_TEXT: 'Making a 140-character sentence is not always that easy when you are constantly thinking of words to use that may or may not be cool to use.',
   USERNAME: 'PhotoBox',
   SMALL_WORD: 'Potato',
+
+  RESIZE_WIDTH: 600,
+  RESIZE_HEIGHT: 600,
+
+  EMPTY_ARRAY: [],
 };
 
 const imageCodesPaths = Util.flatten(Util.iterateFolder(path.resolve(config.get('image_codes'))));

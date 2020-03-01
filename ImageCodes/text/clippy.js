@@ -1,24 +1,25 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class clippy extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
-    const text = await Jimp.read(await this.createCaption({
-      text: msg.text,
+  async process(message) {
+    const body = await this.createCaption({
+      text: message.text,
       font: 'VcrOcdMono.ttf',
       size: '290x130',
       gravity: 'North',
-    }));
+    });
+    const canvas = sharp(this.resource('clippy.png'))
+      .composite([
+        { input: body, left: 28, top: 36 },
+      ]);
 
-    const img = await Jimp.read(this.resource('clippy.png'));
-    img.composite(text, 28, 36);
-
-    this.sendJimp(msg, img);
+    return this.send(message, canvas);
   }
 };

@@ -1,28 +1,34 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class nickelback extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const containedAvatar = (await Jimp.read(msg.avatar)).contain(400, 280);
-    const foreground = await Jimp.read(this.resource('nickelback.png'));
-    const canvas = await Jimp.read(await this.perspectify(containedAvatar, {
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(400, 280, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('nickelback.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 489, y: 287 },
       topRight: { x: 859, y: 192 },
       bottomLeft: { x: 550, y: 537 },
       bottomRight: { x: 909, y: 446 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
-        color: 0xddddddff,
+        width: metadata.width,
+        height: metadata.height,
+        color: '#ddd',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('nickelback.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    return this.send(message, canvas);
   }
 };

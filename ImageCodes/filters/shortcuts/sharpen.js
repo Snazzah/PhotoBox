@@ -1,21 +1,16 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class sharpen extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    img.convolute([
-      [0, -1, 0],
-      [-1, 5, -1],
-      [0, -1, 0],
-    ]);
-
-    this.sendJimp(msg, img);
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
+      .sharpen();
+    return this.send(message, image);
   }
 };

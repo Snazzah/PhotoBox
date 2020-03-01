@@ -2,15 +2,15 @@
 const Jimp = require('jimp');
 
 module.exports = class dither extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = await Jimp.read(msg.url);
-    img.dither565();
-    this.sendJimp(msg, img);
+  async process(message) {
+    const image = await Jimp.read(message.url);
+    image.dither565();
+    return this.send(message, image);
   }
 };

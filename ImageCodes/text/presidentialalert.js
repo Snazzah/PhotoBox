@@ -1,25 +1,27 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class presidentialalert extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
-    const bodytext = await Jimp.read(await this.createCaption({
-      text: msg.text,
+  async process(message) {
+    const body = await this.createCaption({
+      text: message.text,
       font: 'sfprodisplay.ttf',
       size: '1120x80',
       pointSize: '38',
       gravity: 'Northwest',
-    }));
+    });
+    const canvas = sharp(this.resource('presidential_alert.jpg'))
+      .composite([
+        { input: body, left: 60, top: 830 },
+      ])
+      .png();
 
-    const canvas = await Jimp.read(this.resource('presidential_alert.jpg'));
-    canvas.composite(bodytext, 60, 830);
-
-    this.sendJimp(msg, canvas);
+    return this.send(message, canvas);
   }
 };

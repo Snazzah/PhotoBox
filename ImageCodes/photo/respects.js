@@ -1,28 +1,34 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class respects extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = (await Jimp.read(msg.avatar)).resize(110, 110);
-    const foreground = await Jimp.read(this.resource('respects.png'));
-    const canvas = await Jimp.read(await this.perspectify(avatar, {
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(110, 110, { fit: 'cover' })
+      .toBuffer();
+    const metadata = await sharp(this.resource('respects.png')).metadata();
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 366, y: 91 },
       topRight: { x: 432, y: 91 },
       bottomLeft: { x: 378, y: 196 },
       bottomRight: { x: 439, y: 191 },
       canvas: {
-        width: foreground.bitmap.width,
-        height: foreground.bitmap.height,
-        color: 0xddddddff,
+        width: metadata.width,
+        height: metadata.height,
+        color: '#ddd',
       },
-    }));
-    canvas.composite(foreground, 0, 0);
-    this.sendJimp(msg, canvas);
+    });
+    const canvas = sharp(this.resource('respects.png'))
+      .composite([
+        { input: perspective, left: 0, top: 0, blend: 'dest-over' },
+      ]);
+
+    return this.send(message, canvas);
   }
 };
