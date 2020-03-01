@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class chatroulette extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(320, 240, { fit: 'cover' })
       .toBuffer();
     const canvas = sharp(this.resource('chatroulette.png'))
@@ -18,6 +18,6 @@ module.exports = class chatroulette extends ImageCode {
         this.compositeBackground('black', 538, 660),
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

@@ -174,22 +174,22 @@ module.exports = class fakeMessage extends ImageCode {
     return text.replace(/[<>&"']/g, chr => SANITIZE_TEXT_CODES[chr]);
   }
 
-  async process(msg) {
-    const parsedMessage = this.parse(msg);
+  async process(message) {
+    const parsedMessage = this.parse(message);
     const date = new Date();
     const html = this.loadHTMLFile('main', {
       theme: 'dark',
       message: parsedMessage,
-      username: this.htmlReplace(msg.username) + (msg.bot ? this.loadHTMLFile('bottag') : ''),
-      color: msg.color || '#fff',
-      avatar: msg.avatar,
-      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+      username: this.htmlReplace(message.username) + (message.bot ? this.loadHTMLFile('bottag') : ''),
+      color: message.color || '#fff',
+      avatar: message.avatar,
+      mentioned: message.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
       timestamp: `Today at ${date.getHours() + 1 > 12 ? date.getHours() - 11 : date.getHours() + 1}:${date.getMinutes().toString().length === 1 ? '0' + date.getMinutes() : date.getMinutes()} ${date.getHours() + 1 > 12 ? 'PM' : 'AM'}`,
     });
     const textCropHTML = this.loadHTMLFile('main', {
       theme: 'dark',
       message: parsedMessage,
-      mentioned: msg.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
+      mentioned: message.mentioned ? 'isMentionedCozy-3isp7y isMentioned-N-h9aa' : '',
     });
 
     const webShotBuff = await this.webshotHTML(html, {
@@ -201,10 +201,10 @@ module.exports = class fakeMessage extends ImageCode {
       width: 500,
       height: 500,
     });
-    const img = await Jimp.read(webShotBuff);
-    const textCropImg = (await Jimp.read(textCropBuffer)).autocrop(false).autocrop(false);
-    const final = new Jimp(500, textCropImg.bitmap.height + 40);
-    final.composite(img, 0, 0).autocrop(false);
-    this.sendJimp(msg, final);
+    const image = await Jimp.read(webShotBuff);
+    const textCrop = (await Jimp.read(textCropBuffer)).autocrop(false).autocrop(false);
+    const canvas = new Jimp(500, textCrop.bitmap.height + 40);
+    canvas.composite(image, 0, 0).autocrop(false);
+    return this.send(message, canvas);
   }
 };

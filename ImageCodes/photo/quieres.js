@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class quieres extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const image = sharp(await this.toBuffer(msg.url));
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url));
     const metadata = await image.metadata();
     const handSize = metadata.height > metadata.width ? metadata.width : metadata.height;
 
@@ -17,7 +17,7 @@ module.exports = class quieres extends ImageCode {
       .resize({ width: handSize / 2 })
       .toBuffer();
 
-    this.send(msg, image.composite([
+    return this.send(message, image.composite([
       {
         input: hand,
         gravity: 'southeast',

@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class art extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(370, 370)
       .toBuffer();
     const canvas = sharp(this.resource('art.png'))
@@ -19,6 +19,6 @@ module.exports = class art extends ImageCode {
         this.compositeBackground('#fbe7fc', 1364, 1534),
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

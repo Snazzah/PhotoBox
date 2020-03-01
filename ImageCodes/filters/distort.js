@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class distort extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const image = sharp(await this.toBuffer(msg.url))
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
       .modulate({
         saturation: this.rInt(60, 180) / 100,
         hue: this.rInt(10, 350),
@@ -22,6 +22,6 @@ module.exports = class distort extends ImageCode {
     imageIM.out('-roll').out(`+${horizRoll}+${vertiRoll}`);
     imageIM.out('-swirl').out(`${this.rBool() ? '+' : '-'}${this.rInt(120, 180)}`);
 
-    this.send(msg, imageIM);
+    return this.send(message, imageIM);
   }
 };

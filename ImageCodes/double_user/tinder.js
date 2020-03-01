@@ -2,18 +2,18 @@
 const sharp = require('sharp');
 
 module.exports = class tinder extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      avatar2: benchmark.PICTURE2,
+      avatar: constants.PICTURE1,
+      avatar2: constants.PICTURE2,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(218, 218)
       .toBuffer();
-    const avatar2 = await sharp(await this.toBuffer(msg.avatar2))
+    const avatar2 = await sharp(await this.toBuffer(message.avatar2))
       .resize(218, 218)
       .toBuffer();
     const canvas = sharp(this.resource('tinder.png'))
@@ -23,6 +23,6 @@ module.exports = class tinder extends ImageCode {
         this.compositeBackground('white', 570, 738),
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

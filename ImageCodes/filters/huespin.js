@@ -2,17 +2,18 @@
 const sharp = require('sharp');
 
 module.exports = class huespin extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
+      amount: 50,
     };
   }
 
-  async process(msg) {
-    const image = sharp(await this.toBuffer(msg.url))
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
       .modulate({
-        hue: msg.amount,
+        hue: message.amount,
       });
-    this.send(msg, image);
+    return this.send(message, image);
   }
 };

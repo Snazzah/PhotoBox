@@ -3,22 +3,22 @@ const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class firstwords extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const top = im(440, 77).command('convert');
     top.font(this.resource('fonts', 'comic.ttf'), 55);
     top.out('-fill').out('#000000');
     top.out('-background').out('transparent');
     top.out('-gravity').out('center');
-    top.out(`caption:${msg.text[0]}.. ${msg.text[0]}..`);
+    top.out(`caption:${message.text[0]}.. ${message.text[0]}..`);
 
     const bodytext = await this.createCaption({
-      text: msg.text,
+      text: message.text,
       font: 'comic.ttf',
       size: '650x200',
       gravity: 'Southwest',
@@ -30,6 +30,6 @@ module.exports = class firstwords extends ImageCode {
         { input: toptext, left: 30, top: 38 },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

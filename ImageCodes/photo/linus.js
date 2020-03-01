@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class linus extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(800, 450, { fit: 'cover' })
       .toBuffer();
     const metadata = await sharp(this.resource('linus.png')).metadata();
@@ -29,6 +29,6 @@ module.exports = class linus extends ImageCode {
         { input: perspective, left: 0, top: 0, blend: 'dest-over' },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

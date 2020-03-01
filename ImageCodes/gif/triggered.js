@@ -2,14 +2,14 @@
 const Jimp = require('jimp');
 
 module.exports = class triggered extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
+  async process(message) {
+    const avatar = await Jimp.read(message.avatar);
     avatar.resize(320, 320);
     const triggeredOverlay = await Jimp.read(this.resource('triggered.png'));
     triggeredOverlay.resize(280, 60);
@@ -41,6 +41,6 @@ module.exports = class triggered extends ImageCode {
       frames.push(temp.bitmap.data);
     }
 
-    this.sendGIF(msg, 256, 256, frames, 0, 20);
+    return this.sendGIF(message, 256, 256, frames, 0, 20);
   }
 };

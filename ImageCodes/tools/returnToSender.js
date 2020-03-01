@@ -1,13 +1,13 @@
 /* globals ImageCode */
 
 module.exports = class resizeTo extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    this.sendBuffer(msg, msg.url);
+  process(message) {
+    return this.send(message, message.url);
   }
 };

@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class jpeg extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const image = sharp(await this.toBuffer(msg.url));
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url));
     const metadata = await image.metadata();
     const imageJPEG = image
       .resize(metadata.width / 8, metadata.height / 8)
@@ -21,6 +21,6 @@ module.exports = class jpeg extends ImageCode {
       .png({
         quality: 12,
       });
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

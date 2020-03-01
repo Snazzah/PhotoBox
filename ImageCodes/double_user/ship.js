@@ -2,18 +2,18 @@
 const sharp = require('sharp');
 
 module.exports = class ship extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      avatar2: benchmark.PICTURE2,
+      avatar: constants.PICTURE1,
+      avatar2: constants.PICTURE2,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(150, 150)
       .toBuffer();
-    const avatar2 = await sharp(await this.toBuffer(msg.avatar2))
+    const avatar2 = await sharp(await this.toBuffer(message.avatar2))
       .resize(150, 150)
       .toBuffer();
     const canvas = sharp(this.resource('ship.png'))
@@ -22,6 +22,6 @@ module.exports = class ship extends ImageCode {
         { input: avatar2, gravity: 'east' },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

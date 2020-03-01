@@ -2,19 +2,19 @@
 const sharp = require('sharp');
 
 module.exports = class huespingif extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const img = sharp(await this.toBuffer(msg.url))
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url))
       .resize(300, 300, { fit: 'outside' });
     const frameCount = 35;
     const frames = [];
     for (let i = 0; i < frameCount; i++) {
-      const imageFrame = await img.clone()
+      const imageFrame = await image.clone()
         .modulate({
           hue: i * 10,
         })
@@ -24,8 +24,8 @@ module.exports = class huespingif extends ImageCode {
       frames.push(imageFrame.data);
     }
 
-    const metadata = await sharp(await img.png().toBuffer()).metadata();
+    const metadata = await sharp(await image.png().toBuffer()).metadata();
 
-    this.sendGIF(msg, metadata.width, metadata.height, frames, 0, 20);
+    return this.sendGIF(message, metadata.width, metadata.height, frames, 0, 20);
   }
 };

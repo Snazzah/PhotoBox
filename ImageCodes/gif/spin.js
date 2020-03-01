@@ -4,18 +4,18 @@ const colorThief = require('color-thief-jimp');
 const tinycolor = require('tinycolor2');
 
 module.exports = class spin extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await Jimp.read(msg.avatar);
+  async process(message) {
+    const avatar = await Jimp.read(message.avatar);
     avatar.resize(256, 256);
     const color = colorThief.getColor(avatar);
-    const tc = tinycolor({ r: color[0], g: color[1], b: color[2] }).complement();
-    const canvas = new Jimp(256, 256, parseInt(tc.toHex8(), 16));
+    const uncommonColor = tinycolor({ r: color[0], g: color[1], b: color[2] }).complement();
+    const canvas = new Jimp(256, 256, parseInt(uncommonColor.toHex8(), 16));
     canvas.composite(avatar, 0, 0);
     const frameCount = 89;
     const frames = [];
@@ -26,6 +26,6 @@ module.exports = class spin extends ImageCode {
       frames.push(temp.bitmap.data);
     }
 
-    this.sendGIF(msg, 256, 256, frames, 0, 20, parseInt(tc.toHex(), 16));
+    return this.sendGIF(message, 256, 256, frames, 0, 20, parseInt(uncommonColor.toHex(), 16));
   }
 };

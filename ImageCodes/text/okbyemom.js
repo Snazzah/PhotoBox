@@ -3,18 +3,18 @@ const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class okbyemom extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.SMALL_WORD,
+      text: constants.SMALL_WORD,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const txt = im(286, 31).command('convert');
     txt.out('-fill').out('#000000');
     txt.out('-background').out('transparent');
     txt.out('-gravity').out('west');
-    txt.out(`caption:${msg.text}`);
+    txt.out(`caption:${message.text}`);
     const t2 = sharp({
       create: {
         width: 286,
@@ -30,6 +30,6 @@ module.exports = class okbyemom extends ImageCode {
     const canvas = sharp(this.resource('okbyemom.png'))
       .composite([{ input: await this.toBuffer(t3), left: 314, top: 440 }]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class ifunny extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      url: benchmark.PICTURE1,
+      url: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const image = sharp(await this.toBuffer(msg.url));
+  async process(message) {
+    const image = sharp(await this.toBuffer(message.url));
     const metadata = await image.metadata();
     const watermark = await sharp(this.resource('ifunny.png'))
       .resize({ width: metadata.width })
@@ -25,6 +25,6 @@ module.exports = class ifunny extends ImageCode {
       })
       .composite([{ input: watermark, gravity: 'south' }]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

@@ -2,15 +2,15 @@
 const sharp = require('sharp');
 
 module.exports = class presidentialalert extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const body = await this.createCaption({
-      text: msg.text,
+      text: message.text,
       font: 'sfprodisplay.ttf',
       size: '1120x80',
       pointSize: '38',
@@ -22,6 +22,6 @@ module.exports = class presidentialalert extends ImageCode {
       ])
       .png();
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

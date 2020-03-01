@@ -3,33 +3,33 @@ const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class ttt extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
-      username: benchmark.USERNAME,
-      text: benchmark.NORMAL_TEXT,
+      avatar: constants.PICTURE1,
+      username: constants.USERNAME,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const title = im(305, 13).command('convert').antialias(false);
     title.font(this.resource('fonts', 'tahoma.ttf'), 11);
     title.out('-fill').out('#dddddd');
     title.out('-background').out('transparent');
     title.out('-gravity').out('west');
-    title.out(`caption:Body Search Results - ${msg.username}`);
+    title.out(`caption:Body Search Results - ${message.username}`);
 
-    const img = im(279, 63).command('convert').antialias(false);
-    img.font(this.resource('fonts', 'tahoma.ttf'), 11);
-    img.out('-fill').out('#dddddd');
-    img.out('-background').out('transparent');
-    img.out('-gravity').out('northwest');
-    img.out(`caption:Something tells you some of this person's last words were: '${msg.text}--.'`);
+    const text = im(279, 63).command('convert').antialias(false);
+    text.font(this.resource('fonts', 'tahoma.ttf'), 11);
+    text.out('-fill').out('#dddddd');
+    text.out('-background').out('transparent');
+    text.out('-gravity').out('northwest');
+    text.out(`caption:Something tells you some of this person's last words were: '${message.text}--.'`);
 
     const toptxt = await this.imBuffer(title);
-    const body = await this.imBuffer(img);
+    const body = await this.imBuffer(text);
 
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(32, 32)
       .toBuffer();
     const canvas = sharp(this.resource('ttt.png'))
@@ -39,6 +39,6 @@ module.exports = class ttt extends ImageCode {
         { input: body, left: 108, top: 130 },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

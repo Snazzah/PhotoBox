@@ -2,15 +2,15 @@
 const sharp = require('sharp');
 
 module.exports = class dogbite extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const body = await this.createCaption({
-      text: msg.text,
+      text: message.text,
       font: 'comic.ttf',
       size: '218x48',
       gravity: 'North',
@@ -20,6 +20,6 @@ module.exports = class dogbite extends ImageCode {
         { input: body, left: 19, top: 256 },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

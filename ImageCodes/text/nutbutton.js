@@ -2,15 +2,15 @@
 const sharp = require('sharp');
 
 module.exports = class nutbutton extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.SMALL_WORD,
+      text: constants.SMALL_WORD,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const text = await this.createCaption({
-      text: msg.text.toUpperCase(),
+      text: message.text.toUpperCase(),
       font: 'impact.ttf',
       size: '170x155',
       gravity: 'Center',
@@ -31,6 +31,6 @@ module.exports = class nutbutton extends ImageCode {
     const canvas = sharp(this.resource('nutbutton.png'))
       .composite([{ input: t4, left: 1, top: 200 }]);
 
-    await this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

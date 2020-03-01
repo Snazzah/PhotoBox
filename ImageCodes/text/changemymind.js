@@ -3,15 +3,15 @@ const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class changemymind extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const body = im(await this.createCaption({
-      text: msg.text.toUpperCase(),
+      text: message.text.toUpperCase(),
       font: 'impact.ttf',
       size: '266x168',
       gravity: 'North',
@@ -26,6 +26,6 @@ module.exports = class changemymind extends ImageCode {
         { input: bodytext, left: 364, top: 203 },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

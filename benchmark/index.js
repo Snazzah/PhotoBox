@@ -15,6 +15,8 @@ const BenchmarkConstants = {
   NORMAL_TEXT: 'Making a 140-character sentence is not always that easy when you are constantly thinking of words to use that may or may not be cool to use.',
   USERNAME: 'PhotoBox',
   SMALL_WORD: 'Potato',
+  RESIZE_WIDTH: 600,
+  RESIZE_HEIGHT: 600,
 };
 
 const imageCodesPaths = Util.flatten(Util.iterateFolder(path.resolve(config.get('image_codes'))));

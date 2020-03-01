@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class durv extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(157, 226, { fit: 'cover' })
       .toBuffer();
     const canvas = sharp(this.resource('durv.png'))
@@ -18,6 +18,6 @@ module.exports = class durv extends ImageCode {
         this.compositeBackground('black', 401, 226),
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

@@ -2,14 +2,14 @@
 const sharp = require('sharp');
 
 module.exports = class bolsonaro extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      avatar: benchmark.PICTURE1,
+      avatar: constants.PICTURE1,
     };
   }
 
-  async process(msg) {
-    const avatar = await sharp(await this.toBuffer(msg.avatar))
+  async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
       .resize(400, 220, { fit: 'cover' })
       .toBuffer();
     const metadata = await sharp(this.resource('bolsonaro.png')).metadata();
@@ -29,6 +29,6 @@ module.exports = class bolsonaro extends ImageCode {
         { input: perspective, left: 0, top: 0, blend: 'dest-over' },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

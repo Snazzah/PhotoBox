@@ -3,15 +3,15 @@ const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class animeprotest extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const body = im(await this.createCaption({
-      text: msg.text,
+      text: message.text,
       font: 'sunshine.ttf',
       size: '116x92',
       fill: '#62499c',
@@ -27,6 +27,6 @@ module.exports = class animeprotest extends ImageCode {
         this.compositeBackground('#f9f7f8', 219, 300),
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

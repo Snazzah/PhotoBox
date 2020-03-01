@@ -2,15 +2,15 @@
 const sharp = require('sharp');
 
 module.exports = class clippy extends ImageCode {
-  static benchmark(benchmark) {
+  static benchmark(constants) {
     return {
-      text: benchmark.NORMAL_TEXT,
+      text: constants.NORMAL_TEXT,
     };
   }
 
-  async process(msg) {
+  async process(message) {
     const body = await this.createCaption({
-      text: msg.text,
+      text: message.text,
       font: 'VcrOcdMono.ttf',
       size: '290x130',
       gravity: 'North',
@@ -20,6 +20,6 @@ module.exports = class clippy extends ImageCode {
         { input: body, left: 28, top: 36 },
       ]);
 
-    this.send(msg, canvas);
+    return this.send(message, canvas);
   }
 };

@@ -25,17 +25,6 @@ module.exports = class ImageCode {
 
   // SENDING
 
-  sendJimp(msg, img) {
-    img.getBuffer(Jimp.MIME_PNG, (err, buf) => {
-      if (err) throw err;
-      return this.sendBuffer(msg, buf);
-    });
-  }
-
-  async sendIM(msg, img) {
-    return this.sendBuffer(msg, await this.imBuffer(img));
-  }
-
   async send(msg, buf) {
     return this.sendBuffer(msg, await this.toBuffer(buf));
   }
