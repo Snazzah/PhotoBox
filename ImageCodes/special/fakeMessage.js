@@ -7,6 +7,20 @@ const emojiData = require('../../assets/fakemessage/emojis');
 const hljs = require('highlight.js');
 
 module.exports = class fakeMessage extends ImageCode {
+  static benchmark(constants) {
+    return {
+      avatar: constants.PICTURE3,
+      username: constants.USERNAME,
+      color: null,
+      bot: false,
+      mentioned: false,
+      text: constants.NORMAL_TEXT,
+      channels: constants.EMPTY_ARRAY,
+      users: constants.EMPTY_ARRAY,
+      roles: constants.EMPTY_ARRAY,
+    };
+  }
+
   hexToRgb(hex) {
     if(hex.length > 7) {hex = hex.slice(0, 7 - hex.length);}
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -148,10 +162,14 @@ module.exports = class fakeMessage extends ImageCode {
       });
   }
 
+  keyValueForEach(obj, func) {
+    return Object.keys(obj).map(o => func(o, obj[o]));
+  }
+
   loadHTMLFile(file, replacements) {
     let html = this.loadFile(`${file}.html`);
     if(Object.keys(replacements).length)
-      replacements.keyValueForEach((k, v) => {
+      this.keyValueForEach(replacements, (k, v) => {
         html = html.replace(new RegExp(`\\$${k.toUpperCase()}\\$`, 'g'), v);
       });
     return html;
