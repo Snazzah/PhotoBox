@@ -9,8 +9,13 @@ module.exports = class dissector extends ImageCode {
   }
 
   async process(message) {
+    const avatar = await sharp(await this.toBuffer(message.avatar))
+      .resize(1000, 1000, { fit: 'cover' })
+      .ensureAlpha()
+      .png()
+      .toBuffer();
     const metadata = await sharp(this.resource('dissector.png')).metadata();
-    const perspective = await this.perspectify(message.avatar, {
+    const perspective = await this.perspectify(avatar, {
       topLeft: { x: 297, y: 208 },
       topRight: { x: 1120, y: 105 },
       bottomLeft: { x: 297, y: 1065 },
@@ -18,6 +23,7 @@ module.exports = class dissector extends ImageCode {
       canvas: {
         width: metadata.width,
         height: metadata.height,
+        color: 'transparent',
       },
     });
     const canvas = sharp(this.resource('dissector.png'))
