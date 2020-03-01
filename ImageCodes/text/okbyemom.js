@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 const im = require('gm').subClass({ imageMagick: true });
 
 module.exports = class okbyemom extends ImageCode {
@@ -10,21 +10,26 @@ module.exports = class okbyemom extends ImageCode {
   }
 
   async process(msg) {
-    const txt = im(290, 31).command('convert');
+    const txt = im(286, 31).command('convert');
     txt.out('-fill').out('#000000');
     txt.out('-background').out('transparent');
     txt.out('-gravity').out('west');
     txt.out(`caption:${msg.text}`);
-    const t2 = new Jimp(290, 142);
-    const t3 = await this.imToJimp(txt);
-    t2.composite(t3, 0, 0);
-    const t4 = await this.jimpToIM(t2);
-    t4.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
-    t4.out('0,0,6,113 290,0,275,0 0,31,18,141 290,31,288,29');
-    const t5 = await this.imToJimp(t4);
-    const img = await Jimp.read(this.resource('okbyemom.png'));
-    img.composite(t5, 314, 435);
+    const t2 = sharp({
+      create: {
+        width: 286,
+        height: 142,
+        channels: 4,
+        background: 'transparent',
+      },
+    }).composite([{ input: await this.toBuffer(txt), left: 0, top: 0 }])
+      .png();
+    const t3 = await this.toIM(t2);
+    t3.out('-matte').out('-virtual-pixel').out('transparent').out('-distort').out('Perspective');
+    t3.out('0,0,6,113 290,0,275,0 0,31,18,141 290,31,288,29');
+    const canvas = sharp(this.resource('okbyemom.png'))
+      .composite([{ input: await this.toBuffer(t3), left: 314, top: 440 }]);
 
-    this.sendJimp(msg, img);
+    this.send(msg, canvas);
   }
 };

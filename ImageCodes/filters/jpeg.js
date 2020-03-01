@@ -1,5 +1,5 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class jpeg extends ImageCode {
   static benchmark(benchmark) {
@@ -9,12 +9,18 @@ module.exports = class jpeg extends ImageCode {
   }
 
   async process(msg) {
-    const img = await Jimp.read(msg.url);
-    const origW = img.bitmap.width;
-    const origH = img.bitmap.height;
-    img.quality(12).resize(origW / 8, origH / 8);
-    const jpg = await Jimp.read(await this.jimpBuffer(img, Jimp.MIME_JPEG));
-    jpg.resize(origW, origH);
-    this.sendJimp(msg, jpg);
+    const image = sharp(await this.toBuffer(msg.url));
+    const metadata = await image.metadata();
+    const imageJPEG = image
+      .resize(metadata.width / 8, metadata.height / 8)
+      .jpeg({
+        quality: 12,
+      });
+    const canvas = (await this.toSharp(imageJPEG))
+      .resize(metadata.width, metadata.height)
+      .png({
+        quality: 12,
+      });
+    this.send(msg, canvas);
   }
 };

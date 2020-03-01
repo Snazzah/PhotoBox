@@ -98,6 +98,18 @@ module.exports = class ImageCode {
     return await Jimp.read(await this.imBuffer(img));
   }
 
+  async toIM(image) {
+    return im(await this.toBuffer(image));
+  }
+
+  async toJimp(image) {
+    return await Jimp.read(await this.toBuffer(image));
+  }
+
+  async toSharp(image) {
+    return sharp(await this.toBuffer(image));
+  }
+
   // CREATE STUFF
 
   async createCaption(options) {
@@ -209,5 +221,10 @@ module.exports = class ImageCode {
       },
       blend: 'dest-over',
     };
+  }
+
+  async getOutputMetadata(image) {
+    const buffer = await this.toBuffer(image);
+    return await sharp(buffer).metadata();
   }
 };

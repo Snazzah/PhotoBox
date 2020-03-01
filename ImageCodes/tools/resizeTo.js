@@ -1,13 +1,10 @@
 /* globals ImageCode */
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 module.exports = class resizeTo extends ImageCode {
   async process(msg) {
-    const img = await Jimp.read(msg.url);
-    // msg.ogWidth = img.bitmap.width;
-    // msg.ogHeight = img.bitmap.height;
-    img.resize(msg.width, msg.height);
-
-    this.sendJimp(msg, img);
+    const image = sharp(await this.toBuffer(msg.url))
+      .resize(msg.width, msg.height);
+    this.send(msg, image);
   }
 };
