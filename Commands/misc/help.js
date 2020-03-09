@@ -1,4 +1,5 @@
 const { Command } = require('photobox');
+const { Util } = require('photobox-core');
 const config = require('config');
 
 module.exports = class Help extends Command {
@@ -9,9 +10,9 @@ module.exports = class Help extends Command {
   exec(message, args, { prefixUsed }) {
     const prefix = prefixUsed.clean,
       prefixRaw = prefixUsed.raw;
-    if(args[0]) {
+    if (args[0]) {
       const command = this.client.cmds.get(args[0]);
-      if(!command) message.reply(`The command ${args[0]} was not found.`); else {
+      if (!command) message.reply(`The command ${args[0]} was not found.`); else {
         const embed = {
           title: `${prefixRaw}${command.name}`,
           color: config.get('color'),
@@ -22,10 +23,12 @@ module.exports = class Help extends Command {
           description: command.helpMeta.description,
         };
 
-        if(command.aliases.length !== 0) embed.fields.push({ name: 'Aliases', value: command.aliases.map(a => `\`${prefix}${a}\``).join(', ') });
-        if(command.helpMeta.credit) embed.fields.push({ name: 'Command from', value: `[${command.helpMeta.credit.name}](${command.helpMeta.credit.url})` });
-        if(command.helpMeta.extra) {
-          command.helpMeta.extra.keyValueForEach((k, v) => {
+        if (command.aliases.length !== 0)
+          embed.fields.push({ name: 'Aliases', value: command.aliases.map(a => `\`${prefix}${a}\``).join(', ') });
+        if (command.helpMeta.credit)
+          embed.fields.push({ name: 'Command from', value: `[${command.helpMeta.credit.name}](${command.helpMeta.credit.url})` });
+        if (command.helpMeta.extra) {
+          Util.objectMap(command.helpMeta.extra, (k, v) => {
             const o = {
               name: k,
               value: v,
@@ -57,7 +60,7 @@ module.exports = class Help extends Command {
         if(helpobj[v.helpMeta.category]) helpobj[v.helpMeta.category].push(string);
         else helpobj[v.helpMeta.category] = [string];
       });
-      helpobj.keyValueForEach((k, v) => {
+      Util.objectMap(helpobj, (k, v) => {
         embed.fields.push({
           name: `**${k}**`,
           value: '```' + v.join(', ') + '```',

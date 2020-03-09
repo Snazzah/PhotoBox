@@ -307,3 +307,5 @@ exports.Logger = {
     return hours + ':' + minutes + ':' + seconds;
   },
 };
+
+exports.objectMap = (obj, func) => Object.keys(obj).map(o => func(o, obj[o]));

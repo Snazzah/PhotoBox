@@ -14,7 +14,7 @@ const Instagram = module.exports = {
   },
   extract: async (_, url) => {
     const response = await fetch(url);
-    if(response.status === 404)
+    if (response.status === 404)
       return null;
 
     const metadata = await response.text().then(Instagram.getMetadata);

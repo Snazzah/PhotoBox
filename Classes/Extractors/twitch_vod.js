@@ -11,7 +11,7 @@ module.exports = {
       headers: { 'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko' },
     });
     const vodData = await response.json();
-    if(response.status === 400)
+    if (response.status === 400)
       return null;
     else
       return vodData.data[0].thumbnail_url.replace('%{width}', '1430').replace('%{height}', '800');

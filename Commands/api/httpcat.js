@@ -4,9 +4,9 @@ const config = require('config');
 module.exports = class HTTPCat extends Command {
   get name() { return 'httpcat'; }
 
-  async exec(message, args) {
+  exec(message, args) {
     const code = args[0] || 404;
-    message.channel.send({ embed: {
+    return message.channel.send({ embed: {
       color: config.get('color'),
       image: { url: `https://http.cat/${code}.jpg` },
       footer: { text: `${message.author.tag} (${message.author.id})` },

@@ -88,7 +88,7 @@ module.exports = class NekosLife extends Command {
     const image = (await fetch(`https://nekos.life/api/v2/img/${args[0]}`, { headers: {
       'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
     } }).then(r => r.json()));
-    message.reply({ embed: {
+    return message.reply({ embed: {
       color: config.get('color'),
       image: { url: image.url },
       footer: { text: `${message.author.tag} (${message.author.id})` },

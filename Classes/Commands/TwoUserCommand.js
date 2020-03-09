@@ -17,9 +17,10 @@ module.exports = class OneUserCommand extends Command {
 
   async exec(message) {
     let user = message.author;
-    if(!message.mentions.users.array()[0]) return message.channel.send('Provide a mention for this to work!');
+    if (!message.mentions.users.array()[0])
+      return message.channel.send('Provide a mention for this to work!');
     let user2 = message.mentions.users.array()[0];
-    if(message.mentions.users.size >= 2) {
+    if (message.mentions.users.size >= 2) {
       user = message.mentions.users.array()[0];
       user2 = message.mentions.users.array()[1];
     }
@@ -30,7 +31,7 @@ module.exports = class OneUserCommand extends Command {
         avatar: user.displayAvatarURL({ format: 'png', size: this.avatarSize }),
         avatar2: user2.displayAvatarURL({ format: 'png', size: this.avatarSize }),
       });
-      message.channel.send({
+      return message.channel.send({
         embed: {
           color: config.get('color'),
           image: { url: `attachment://${this.code}.${this.extension}` },

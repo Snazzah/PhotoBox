@@ -13,7 +13,7 @@ module.exports = class Ping extends Command {
     } });
 
     const time = Date.now() - time1;
-    m.edit({ embed: {
+    return m.edit({ embed: {
       color: 0xf7b300,
       title: '📸 Pong!',
       description: `WS: ${this.client.ws.ping} ms\nREST: ${time} ms`,

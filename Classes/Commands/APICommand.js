@@ -8,9 +8,9 @@ module.exports = class APICommand extends Command {
   async exec(message) {
     let done = null;
     this.doTimer(message, d => done = d);
-    try{
+    try {
       const res = await fetch(this.url);
-      if(res.status >= 200 && res.status < 300) {
+      if (res.status >= 200 && res.status < 300) {
         let body = await res.text();
         try {
           body = JSON.parse(body);
@@ -22,13 +22,12 @@ module.exports = class APICommand extends Command {
           image: { url: this.getImage(body) },
           footer: { text: `${message.author.tag} (${message.author.id})` },
         } });
-      }
-      else await message.reply(`The service gave us a ${res.status}! Try again later!`);
+      } else await message.reply(`The service gave us a ${res.status}! Try again later!`);
 
       done();
       message.channel.stopTyping();
     } catch(e) {
-      if(done(true)) return;
+      if (done(true)) return;
       await message.reply('Seems like the URL doesn\'t exist! Contact support!');
       done();
       message.channel.stopTyping();
@@ -39,14 +38,14 @@ module.exports = class APICommand extends Command {
     let done = false;
     let quit = false;
     func(d => {
-      if(d) return quit;
+      if (d) return quit;
       done = true;
     });
     setTimeout(() => {
-      if(!done) message.channel.startTyping();
+      if (!done) message.channel.startTyping();
     }, 1000);
     setTimeout(() => {
-      if(!done) {
+      if (!done) {
         quit = true;
         message.reply('The request was dropped due to the call taking too long!');
         message.channel.stopTyping();

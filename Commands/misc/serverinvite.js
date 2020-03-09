@@ -6,7 +6,7 @@ module.exports = class ServerInvite extends Command {
   get cooldown() { return 0; }
 
   exec(message) {
-    message.channel.send('https://join.photobox.pw');
+    return message.channel.send('https://join.photobox.pw');
   }
 
   get helpMeta() { return {

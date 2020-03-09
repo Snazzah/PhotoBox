@@ -23,15 +23,15 @@ const Twitter = module.exports = {
       !!config.get('api.twitter.consumer') && !!config.get('api.twitter.secret');
   },
   extract: async match => {
-    if(!Twitter.hasKeys) return false;
-    if(!Twitter.token) await Twitter.refreshToken();
+    if (!Twitter.hasKeys) return false;
+    if (!Twitter.token) await Twitter.refreshToken();
     const [ , twitterID, mediaID ] = match;
     const response = await fetch(`https://api.twitter.com/1.1/statuses/show/${twitterID}.json`, {
       headers: { Authorization: `Bearer ${Twitter.token}` },
     });
-    if(response.status === 404) {
+    if (response.status === 404) {
       return null;
-    } else if(response.status === 403) {
+    } else if (response.status === 403) {
       await Twitter.refreshToken();
       return await Twitter.extract(match);
     } else {

@@ -6,8 +6,8 @@ module.exports = class Goat extends Command {
   get name() { return 'goat'; }
   get aliases() { return ['🐐']; }
 
-  async exec(message) {
-    message.channel.send({ embed: {
+  exec(message) {
+    return message.channel.send({ embed: {
       color: config.get('color'),
       image: { url: `https://placegoat.com/${Util.Random.int(500, 700)}.png` },
       footer: { text: `${message.author.tag} (${message.author.id})` },

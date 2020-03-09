@@ -6,8 +6,8 @@ module.exports = class Giphy extends Command {
   get name() { return 'giphy'; }
 
   async exec(message, args) {
-    if(!this.client.apiKey('giphy')) return message.reply('No Giphy API key was given in the PhotoBox config.');
-    if(!args.join(' ')) return message.reply('You need to supply some text to search for!');
+    if (!this.client.apiKey('giphy')) return message.reply('No Giphy API key was given in the PhotoBox config.');
+    if (!args.join(' ')) return message.reply('You need to supply some text to search for!');
     const query = new URLSearchParams({
       api_key: this.client.apiKey('giphy'),
       q: args.join(' '),
@@ -17,11 +17,11 @@ module.exports = class Giphy extends Command {
       lang: 'en',
     });
     const res = (await fetch('https://api.giphy.com/v1/gifs/search?' + query.toString()).then(r => r.json()));
-    if(!res.data[0]) return message.reply('No GIF was found for that search query!');
+    if (!res.data[0]) return message.reply('No GIF was found for that search query!');
     const gif = res.data[0];
     res.data.shift();
     const bottomText = res.data[0] ? `Other results: ${res.data.map(g => `[${g.title}](${g.url})`).join(', ')}` : '';
-    message.channel.send({
+    return message.channel.send({
       embed: {
         color: config.get('color'),
         title: gif.title,

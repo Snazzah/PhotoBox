@@ -15,13 +15,13 @@ module.exports = class PhotoCommand extends Command {
     try {
       message.channel.startTyping();
       const bufferOrURL = await Util.Media.getContent(message, args[0]);
-      if(!bufferOrURL) return;
+      if (!bufferOrURL) return;
       const buffer = await this.sendToProcess(message, {
         code: this.code,
         avatar: bufferOrURL,
         url: bufferOrURL,
       });
-      message.channel.send({
+      return message.channel.send({
         embed: {
           color: config.get('color'),
           image: { url: `attachment://${this.code}.${this.extension}` },

@@ -1,3 +1,5 @@
+const { objectMap } = require('./Util');
+
 module.exports = class StatTracker {
   constructor(client) {
     this.client = client;
@@ -21,8 +23,16 @@ module.exports = class StatTracker {
     };
   }
 
+  async _sliceKeys(func) {
+    const newObject = {};
+    objectMap(this._keys, (k, v) => {
+      if(func(k, v)) newObject[k] = v;
+    });
+    return newObject;
+  }
+
   async init() {
-    this._keys.keyValueForEach(this._prepKey.bind(this));
+    objectMap(this._keys, this._prepKey.bind(this));
   }
 
   async _prepKey(key, expires) {
@@ -38,19 +48,19 @@ module.exports = class StatTracker {
   }
 
   prepKeysStart(start) {
-    return this.prepThis(this._keys.sliceKeys(k => k.startsWith(start)));
+    return this.prepThis(this._sliceKeys(k => k.startsWith(start)));
   }
 
   prepThis(keys) {
-    return keys.keyValueForEach(this._prepKey.bind(this));
+    return objectMap(keys, this._prepKey.bind(this));
   }
 
   incrAll(start) {
-    return this.incrThis(this._keys.sliceKeys(k => k.startsWith(start)));
+    return this.incrThis(this._sliceKeys(k => k.startsWith(start)));
   }
 
   incrThis(keys) {
-    return keys.keyValueForEach(this.db.incr.bind(this.db));
+    return objectMap(keys, this.db.incr.bind(this.db));
   }
 
   async bumpStat(stat) {
@@ -87,6 +97,6 @@ module.exports = class StatTracker {
   }
 
   getKeyStats(start) {
-    return this.getStats(Object.keys(this._keys.sliceKeys(k => k.startsWith(start))));
+    return this.getStats(Object.keys(this._sliceKeys(k => k.startsWith(start))));
   }
 };

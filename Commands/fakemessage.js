@@ -46,7 +46,7 @@ module.exports = class FakeMessage extends Command {
         users: message.mentions.users.array().map(u => ({ id: u.id, name: message.mentions.members ? message.mentions.members.get(u.id).displayName : u.username })),
         roles: message.mentions.roles.array().map(r => ({ id: r.id, name: r.name, color: r.color, hcolor: r.hexColor })),
       });
-      message.channel.send({
+      return message.channel.send({
         embed: {
           color: config.get('color'),
           image: { url: 'attachment://fakemessage.png' },

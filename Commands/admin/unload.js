@@ -5,10 +5,10 @@ module.exports = class Unload extends Command {
   get aliases() { return ['ul']; }
 
   exec(message, args) {
-    if(!args.length)
+    if (!args.length)
       return message.channel.send('No commands were unloaded.');
     const commands = args.map(name => this.client.cmds.get(name));
-    if(commands.includes(undefined))
+    if (commands.includes(undefined))
       return message.channel.send(':no_entry: Invalid command!');
 
     const unloadedCommands = commands.map(command => {
@@ -16,7 +16,7 @@ module.exports = class Unload extends Command {
       return command;
     });
 
-    message.channel.send(`Unloaded ${unloadedCommands.map(c => `\`${c.name}\``).join(', ')}.`);
+    return message.channel.send(`Unloaded ${unloadedCommands.map(c => `\`${c.name}\``).join(', ')}.`);
   }
 
   get permissions() { return ['owner']; }

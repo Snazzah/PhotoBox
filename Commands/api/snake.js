@@ -6,8 +6,8 @@ module.exports = class Snake extends Command {
   get name() { return 'snake'; }
   get aliases() { return ['🐍', 'snek']; }
 
-  async exec(message) {
-    message.channel.send({ embed: {
+  exec(message) {
+    return message.channel.send({ embed: {
       color: config.get('color'),
       image: { url: `http://fur.im/snek/i/${Util.Random.int(1, 874)}.png` },
       footer: { text: `${message.author.tag} (${message.author.id})` },

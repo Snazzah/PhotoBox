@@ -17,7 +17,7 @@ module.exports = class OneUserCommand extends Command {
 
   async exec(message) {
     let user = message.author;
-    if(message.mentions.users.size >= 1) user = message.mentions.users.array()[0];
+    if (message.mentions.users.size >= 1) user = message.mentions.users.array()[0];
     message.channel.startTyping();
     try {
       const buffer = await this.sendToProcess(message, {
@@ -25,7 +25,7 @@ module.exports = class OneUserCommand extends Command {
         avatar: user.displayAvatarURL({ size: this.avatarSize, format: 'png' }),
         username: user.username,
       });
-      message.channel.send({
+      return message.channel.send({
         embed: {
           color: config.get('color'),
           image: { url: `attachment://${this.code}.${this.extension}` },

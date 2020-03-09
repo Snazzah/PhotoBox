@@ -44,7 +44,7 @@ module.exports = class WeebSh extends Command {
       'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json()));
-    message.reply({ embed: {
+    return message.reply({ embed: {
       color: config.get('color'),
       image: { url: image.url },
       footer: { text: `${message.author.tag} (${message.author.id})` },

@@ -6,10 +6,10 @@ module.exports = class ReloadOne extends Command {
   get aliases() { return ['reload1', 'r1', 'reloadsingle', 'rs']; }
 
   exec(message, args) {
-    if(!args.length)
+    if (!args.length)
       return message.channel.send('No commands were reloaded.');
     const commands = args.map(name => this.client.cmds.get(name));
-    if(commands.includes(undefined))
+    if (commands.includes(undefined))
       return message.channel.send(':no_entry: Invalid command!');
 
     const fileExist = commands.map(command => {
@@ -18,7 +18,7 @@ module.exports = class ReloadOne extends Command {
       return stat.isFile();
     });
 
-    if(fileExist.includes(false))
+    if (fileExist.includes(false))
       return message.channel.send(':no_entry: A file that had a specified command no longer exists!');
 
     const reloadedCommands = commands.map(command => {
@@ -29,7 +29,7 @@ module.exports = class ReloadOne extends Command {
       return newCommand;
     });
 
-    message.channel.send(`Reloaded ${reloadedCommands.map(c => `\`${c.name}\``).join(', ')}.`);
+    return message.channel.send(`Reloaded ${reloadedCommands.map(c => `\`${c.name}\``).join(', ')}.`);
   }
 
   get permissions() { return ['owner']; }

@@ -22,7 +22,7 @@ module.exports = {
       }]),
     });
     const clipData = await response.json();
-    if(clipData[0].errors)
+    if (clipData[0].errors)
       return null;
     else
       return `https://clips-media-assets2.twitch.tv/AT-cm%7C${clipData[0].data.updateClipViewCount.clip.id}-preview-480x272.jpg`;

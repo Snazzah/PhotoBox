@@ -10,7 +10,7 @@ module.exports = class ImageOfTheDay extends Command {
     const res = (await fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US').then(r => r.json()));
     const image = res.images[0];
 
-    message.channel.send({ embed: {
+    return message.channel.send({ embed: {
       color: config.get('color'),
       title: image.copyright,
       url: image.copyrightlink,

@@ -5,7 +5,7 @@ module.exports = class RoboHAsh extends Command {
   get name() { return 'robohash'; }
   get aliases() { return ['rh', '🤖']; }
 
-  async exec(message, args) {
+  exec(message, args) {
     let value = args[0] || message.author.id;
     if(message.mentions.users.first())
       value = message.mentions.users.first().id;
@@ -14,7 +14,7 @@ module.exports = class RoboHAsh extends Command {
     else if(message.mentions.roles.first())
       value = message.mentions.roles.first().id;
 
-    message.channel.send({ embed: {
+    return message.channel.send({ embed: {
       color: config.get('color'),
       image: { url: `https://robohash.org/${encodeURIComponent(value)}.png` },
       footer: { text: `${message.author.tag} (${message.author.id})` },

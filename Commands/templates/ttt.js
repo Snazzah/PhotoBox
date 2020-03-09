@@ -12,7 +12,7 @@ module.exports = class TTT extends Command {
     if(args[0].match(/\[id=(\d+)\]/g)) {
       const id = args[0].replace(/\[id=(\d+)\]/g, '$1');
       if(!this.client.users.get(id)) {
-        user = await this.client.fetchUser(id);
+        user = await this.client.users.fetch(id);
         if(!user) {
           message.reply('Invalid ID!');
           return;

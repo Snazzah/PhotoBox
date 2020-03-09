@@ -11,16 +11,16 @@ module.exports = class LoadNew extends Command {
     return [].concat.apply([], files.map(file => {
       const filePath = path.join(folderPath, file);
       const stat = fs.lstatSync(filePath);
-      if(stat.isSymbolicLink()) {
+      if (stat.isSymbolicLink()) {
         const realPath = fs.readlinkSync(filePath);
         if(stat.isFile() && file.endsWith('.js')) {
           return realPath;
-        }else if(stat.isDirectory()) {
+        } else if (stat.isDirectory()) {
           return this.iterateFolder(realPath);
         }
-      }else if(stat.isFile() && file.endsWith('.js')) {
+      } else if (stat.isFile() && file.endsWith('.js')) {
         return filePath;
-      }else if(stat.isDirectory()) {
+      } else if (stat.isDirectory()) {
         return this.iterateFolder(filePath);
       }
     }));
@@ -40,7 +40,7 @@ module.exports = class LoadNew extends Command {
         return command;
       });
 
-      message.channel.send(`Added ${newCommands.map(c => `\`${c.name}\``).join(', ')}.`);
+      return message.channel.send(`Added ${newCommands.map(c => `\`${c.name}\``).join(', ')}.`);
     }
   }
 

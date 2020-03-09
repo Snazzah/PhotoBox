@@ -8,7 +8,7 @@ module.exports = class Reload extends Command {
     const sentMessage = await message.channel.send('Reloading commands...');
     this.client.cmds.reload();
     this.client.cmds.preloadAll();
-    sentMessage.edit('Reloaded commands.');
+    return sentMessage.edit('Reloaded commands.');
   }
 
   get permissions() { return ['owner']; }

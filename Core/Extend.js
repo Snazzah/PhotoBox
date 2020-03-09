@@ -63,16 +63,6 @@ Object.defineProperty(Array.prototype, 'instancesOf', {
   },
 });
 
-Object.defineProperty(Object.prototype, 'keyValueForEach', {
-  enumerable: false,
-  writable: true,
-  value: function(func) {
-    Object.keys(this).map(o => {
-      func(o, this[o]);
-    });
-  },
-});
-
 Object.defineProperty(String.prototype, 'toHHMMSS', {
   enumerable: false,
   writable: true,
@@ -103,19 +93,6 @@ Object.defineProperty(String.prototype, 'int', {
   writable: true,
   value: function() {
     return parseInt(this);
-  },
-});
-
-
-Object.defineProperty(Object.prototype, 'sliceKeys', {
-  enumerable: false,
-  writable: true,
-  value: function(f) {
-    const newObject = {};
-    this.keyValueForEach((k, v) => {
-      if(f(k, v)) newObject[k] = v;
-    });
-    return newObject;
   },
 });
 
