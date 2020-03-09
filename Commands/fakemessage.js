@@ -37,8 +37,8 @@ module.exports = class FakeMessage extends Command {
       const buffer = await this.sendToProcess(message, {
         code: 'fakeMessage',
         avatar: user.displayAvatarURL({ format: 'png', size: 128 }),
-        username: message.guild && message.guild.members.get(user.id) ? message.guild.members.get(user.id).displayName : user.username,
-        color: message.guild && message.guild.members.get(user.id) && message.guild.members.get(user.id).roles.color ? message.guild.members.get(user.id).displayHexColor : null,
+        username: message.guild && message.guild.members.cache.get(user.id) ? message.guild.members.cache.get(user.id).displayName : user.username,
+        color: message.guild && message.guild.members.cache.get(user.id) && message.guild.members.cache.get(user.id).roles.color ? message.guild.members.cache.get(user.id).displayHexColor : null,
         bot: user.bot,
         mentioned: message.mentions.users.has(message.author.id) || message.mentions.everyone,
         text: text,
