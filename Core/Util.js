@@ -173,7 +173,10 @@ exports.Media = {
       if(headResponse.error) return headResponse;
 
       if(!exports.Media.SUPPORTED_FORMATS.includes(headResponse.headers.get('content-type')))
-        return { error: exports.Media.RESPONSE_CODES.INVALID_MIME };
+        return {
+          error: exports.Media.RESPONSE_CODES.INVALID_MIME,
+          code: exports.Media.RESPONSE_CODES.INVALID_MIME,
+        };
     }
 
     const response = await exports.Media.request(url);

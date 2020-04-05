@@ -44,6 +44,8 @@ module.exports = class WeebSh extends Command {
       'User-Agent': `${this.client.pkg.name}/${this.client.pkg.version}/${config.get('debug') ? 'test' : 'production'}`,
       Authorization: `Wolke ${this.client.apiKey('weebsh')}`,
     } }).then(r => r.json()));
+    if(image.status === 404)
+      return message.reply('Could not find any images with the query!');
     return message.reply({ embed: {
       color: config.get('color'),
       image: { url: image.url },

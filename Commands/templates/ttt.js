@@ -32,7 +32,7 @@ module.exports = class TTT extends Command {
       const buffer = await this.sendToProcess(message, {
         code: 'ttt',
         avatar: user.displayAvatarURL({ format: 'png', size: 128 }),
-        username: message.guild && message.guild.members.get(user.id) ? message.guild.members.get(user.id).displayName : user.username,
+        username: message.guild && message.guild.members.cache.get(user.id) ? message.guild.members.cache.get(user.id).displayName : user.username,
         text: text,
       });
       message.channel.send({
